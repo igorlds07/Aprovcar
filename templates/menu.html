@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu com Submenus ao Clicar</title>
+    <style>
+        /* Estilo do menu fixo */
+        .menu {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 250px;
+            background-color: #007bff;
+            padding: 20px 10px;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* Estilo para os itens principais do menu */
+        .menu-item {
+            position: relative;
+        }
+
+        .menu-item > button {
+            background-color: #0056b3;
+            color: white;
+            border: none;
+            padding: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 5px;
+            text-align: left;
+            width: 100%;
+            display: flex;
+            justify-content: space-between; /* Alinha o texto e o símbolo */
+            align-items: center;
+            transition: background-color 0.3s ease;
+        }
+
+        .menu-item > button:hover {
+            background-color: #003f88;
+        }
+
+        /* Adicionando símbolo para submenu */
+        .menu-item > button::after {
+            content: '>'; /* Símbolo de seta */
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        /* Estilo dos submenus */
+        .submenu {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 100%; /* Exibe o submenu à direita do botão principal */
+            background-color: #0056b3;
+            border-radius: 5px;
+            box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.1);
+            padding: 10px 0;
+
+            flex-direction: column;
+            width: 200px; /* Define largura fixa para os submenus */
+        }
+
+        .submenu a {
+            display: block;
+            padding: 8px 15px;
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+            transition: background-color 0.3s ease;
+        }
+
+        .submenu a:hover {
+            background-color: #003f88;
+        }
+
+        /* Exibir submenu ao clicar no botão principal */
+        .menu-item:focus-within .submenu {
+            display: flex; /* Exibe o submenu */
+        }
+    </style>
+</head>
+<body>
+    <div class="menu">
+        <!-- Menu principal -->
+        <div class="menu-item">
+            <button tabindex="0">Clientes</button>
+            <div class="submenu">
+                <a href="/cadastro">Cadastrar Cliente</a>
+                <a href="/editar">Editar Cliente</a>
+                <a href="/excluir_cliente">Excluir Cliente</a>
+                <a href="/clientes">Visualizar Clientes</a>
+            </div>
+        </div>
+        <div class="menu-item">
+            <button tabindex="0">Funcionários</button>
+            <div class="submenu">
+                <a href="/funcionarios">Cadastrar Funcionário</a>
+                <a href="/editar_funcionario">Editar Funcionário</a>
+                <a href="/excluir_funcionario">Excluir Funcionário</a>
+                <a href="/funcionarios">Visualizar Funcionários</a>
+            </div>
+        </div>
+         <!-- Novo botão: Relatórios -->
+        <div class="menu-item">
+            <button tabindex="0">Relatórios</button>
+            <div class="submenu">
+                <a href="/relatorio_orcamentos">Relatório de Orçamentos</a>
+                <a href="/relatorio_despesas">Relatório de Despesas</a>
+                <a href="/relatorio_funcionarios">Relatório de Funcionários</a>
+            </div>
+        </div>
+        <div class="menu-item">
+            <button tabindex="0">Despesas</button>
+            <div class="submenu">
+                <a href="/despesas">Inserir despesas</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu com Botões</title>
+    <style>
+        /* Resetando margens e preenchimentos */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Corpo da página */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin-bottom: 80px; /* Para evitar sobreposição com o menu */
+        }
+
+        /* Estilo do menu fixo à esquerda com botões em coluna */
+        .menu {
+            position: fixed;
+            top: 20px; /* Ajuste a posição do menu */
+            left: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px; /* Espaçamento entre os botões */
+            z-index: 1000;
+        }
+
+        .menu button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 8px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .menu button:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+
+        /* Conteúdo principal */
+        .main-content {
+            margin-left: 100px; /* Garante que o conteúdo não seja sobreposto pelos botões */
+            padding: 20px;
+        }
+
+        h1, h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        form {
+            max-width: 600px;
+            margin: 30px auto;
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        form label {
+            font-size: 16px;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        form input[type="text"] {
+            width: calc(100% - 22px);
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+
+        form button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        form button:hover {
+            background-color: #0056b3;
+        }
+
+        table {
+            width: 80%;
+            margin: 30px auto;
+            margin-right: 50px; /* Adiciona espaço à esquerda */
+            border-collapse: collapse;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        table th, table td {
+            padding: 12px 15px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+
+        table th {
+            background-color: #f2f2f2;
+        }
+
+        table tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        table tbody tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .error-message {
+            color: red;
+            text-align: center;
+            font-size: 18px;
+            margin-top: 20px;
+        }
+
+        .no-results {
+            color: #ff6347;
+            font-size: 18px;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        /* Responsividade: ajuste para telas menores */
+        @media screen and (max-width: 768px) {
+            body {
+                padding: 0 15px; /* Espaçamento nas laterais */
+            }
+
+            .main-content {
+                margin-left: 20px; /* Garante que o conteúdo não seja sobreposto pelos botões */
+                padding: 15px; /* Reduz o preenchimento */
+            }
+
+            .menu {
+                top: 10px; /* Ajuste da posição para dispositivos pequenos */
+                left: 10px;
+            }
+
+            .menu button {
+                padding: 10px 15px; /* Menor tamanho de botão em telas pequenas */
+                font-size: 14px;  /* Menor tamanho de texto nos botões */
+            }
+        }
+    </style>
+</head>
+<body>
+  <div class="menu">
+    <label>
+        <button>Clientes</button>
+        <input type="checkbox">
+        <div class="submenu">
+            <a href="/cadastro">Cadastrar Cliente</a>
+            <a href="/editar_cliente">Editar Cliente</a>
+            <a href="/excluir_cliente">Excluir Cliente</a>
+            <a href="/clientes">Visualizar Clientes</a>
+        </div>
+
+    </label>
+    <label>
+        <button>Funcionários</button>
+        <input type="checkbox">
+        <div class="submenu">
+            <a href="/cadastro_funcionario">Cadastrar Funcionário</a>
+            <a href="/editar_funcionario">Editar Funcionário</a>
+            <a href="/excluir_funcionario">Excluir Funcionário</a>
+            <a href="/funcionarios">Visualizar Funcionários</a>
+        </div>
+    </label>
+      <label>
+        <div class="submenu">
+            <a href="/relatorio_orcamentos">Relatórios Orçamentos</a>
+        </div>
+        </label>
+</div>
+   <!-- Inclui o menu fixo -->
+    {% include 'menu.html' %}
+    <!-- Conteúdo principal da página -->
+    <div class="main-content">
+        <h1>Buscar Cliente</h1>
+
+    <!-- Formulário para buscar um cliente específico -->
+    <form action="/clientes" method="POST">
+        <label for="nome">Nome do Cliente:</label>
+        <input type="text" id="nome" name="nome" placeholder="Digite o nome do cliente">
+        <button type="submit">Buscar</button>
+    </form>
+
+    <!-- Botão para ver todos os clientes -->
+    <form action="/clientes" method="GET">
+         <button type="submit" name="ver_todos" value="true">Ver Todos os Clientes</button>
+    </form>
+
+    <h2>Resultado da Busca:</h2>
+
+    {% if clientes %}
+        {% if clientes[0] == 'Cliente não encontrado' %}
+            <p class="error-message">{{ clientes[0] }}</p>
+        {% else %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>id</th>
+                        <th>Nome</th>
+                        <th>Contato</th>
+                        <th>Veículo</th>
+                        <th>Data Entrada</th>
+                        <th>Data Saída</th>
+                        <th>Valor Orçamento</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for cliente in clientes %}
+                        <tr>
+                            <td>{{ cliente[0] }}</td> <!-- Exibindo o id -->
+                            <td>{{ cliente[1] }}</td> <!-- Exibindo o Nome -->
+                            <td>{{ cliente[2] }}</td> <!-- Exibindo o Contato -->
+                            <td>{{ cliente[3] }}</td> <!-- Exibindo o Veículo -->
+                            <td>{{ cliente[4] }}</td> <!-- Exibindo a Data de Entrada -->
+                            <td>{{ cliente[5] }}</td> <!-- Exibindo a Data de Saída -->
+                            <td>R$ {{ cliente[6] }}</td> <!-- Exibindo o Valor Orçamento -->
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+    {% endif %}
+    </div>
+</body>
+</html>

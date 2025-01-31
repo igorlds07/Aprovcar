@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Cliente</title>
+    <style>
+        /* Estilo para o conteúdo da página */
+        .main-content {
+            margin-left: 80px; /* Garante um espaço para os botões à esquerda */
+            padding: 20px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin-bottom: 60px;
+        }
+
+        .menu {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            display: flex;
+            flex-direction: column; /* Organiza os botões verticalmente */
+            gap: 10px; /* Espaçamento entre os botões */
+        }
+
+        .menu button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 15px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 8px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .menu button:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+
+        .container {
+            width: 70%;
+            margin: 50px auto;
+            margin-right: 105px;
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        .form-group input[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .form-group input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+
+        .error {
+            color: red;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .messages {
+            text-align: center;
+            margin: 0 auto 20px auto;
+            max-width: 80%;
+        }
+
+        .alert {
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .alert-success {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .alert-error {
+            background-color: #dc3545;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="menu">
+        <label>
+            <button>Clientes</button>
+            <div class="submenu">
+                <a href="/cadastro">Cadastrar Cliente</a>
+                <a href="/editar">Editar Cliente</a>
+                <a href="/excluir_cliente">Excluir Cliente</a>
+                <a href="/clientes">Visualizar Clientes</a>
+            </div>
+        </label>
+        <label>
+            <button>Funcionários</button>
+            <div class="submenu">
+                <a href="/funcionarios">Cadastrar Funcionário</a>
+                <a href="/editar_funcionario">Editar Funcionário</a>
+                <a href="/excluir_funcionario">Excluir Funcionário</a>
+                <a href="/funcionarios">Visualizar Funcionários</a>
+            </div>
+        </label>
+        <label>
+        <div class="submenu">
+            <a href="/relatorio_orcamentos">Relatórios Orçamentos</a>
+        </div>
+        </label>
+    </div>
+    <!-- Inclui o menu fixo -->
+    {% include 'menu.html' %}
+    <!-- Exibir mensagens de sucesso ou erro -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="messages">
+        {% for category, message in messages %}
+        <div class="alert alert-{{ category }}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    <div class="container">
+        <h1>Editar Cliente</h1>
+        <form action="/editar" method="POST">
+            <div class="form-group">
+                <label for="cliente">Nome do Cliente:</label>
+                <input type="text" id="cliente" name="cliente" value="{{ cliente[1] if cliente else '' }}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="nome">Nome:</label>
+                <input type="text" id="nome" name="nome" value="{{ cliente[1] if cliente else '' }}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="contato">Contato:</label>
+                <input type="text" id="contato" name="contato" value="{{ cliente[2] if cliente else '' }}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="veiculo">Veículo:</label>
+                <input type="text" id="veiculo" name="veiculo" value="{{ cliente[3] if cliente else '' }}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="data_entrada">Data de Entrada:</label>
+                <input type="date" id="data_entrada" name="data_entrada" value="{{ cliente[4] if cliente else '' }}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="data_saida">Data de Saída:</label>
+                <input type="date" id="data_saida" name="data_saida" value="{{ cliente[5] if cliente else '' }}">
+            </div>
+
+            <div class="form-group">
+                <label for="valor_orcamento">Valor Orçamento:</label>
+                <input type="number" id="valor_orcamento" name="valor_orcamento" value="{{ cliente[6] if cliente else '' }}" required>
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="Atualizar Cliente">
+            </div>
+        </form>
+    </div>
+</body>
+</html>

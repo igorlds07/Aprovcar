@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Despesas</title>
+    <style>
+        /* Resetando margens e preenchimentos */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            display: flex;
+            flex-direction: row;
+            height: 100vh;
+        }
+
+        /* Menu estático à esquerda */
+        .menu {
+            width: 250px;
+            background-color: #007bff;
+            padding: 20px;
+            color: white;
+            height: 100%;
+        }
+
+        .menu h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .menu ul {
+            list-style: none;
+        }
+
+        .menu ul li {
+            padding: 10px 0;
+        }
+
+        .menu ul li a {
+            text-decoration: none;
+            color: white;
+            font-size: 18px;
+        }
+
+        .menu ul li a:hover {
+            text-decoration: underline;
+        }
+
+        /* Estilo para a área do formulário */
+        .container {
+            margin-left: 360px; /* Para deslocar o conteúdo à direita do menu */
+            padding: 40px;
+            width: 100%;
+            max-width: 800px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+             border-bottom: 2px solid #007BFF;
+        }
+
+        /* Estilo para o formulário */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            font-weight: bold;
+            color: #555;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            background-color: #f9f9f9;
+        }
+
+        .form-group input[type="submit"] {
+            background-color: #28a745;
+            color: white;
+            cursor: pointer;
+            border: none;
+            font-size: 18px;
+            padding: 12px;
+            border-radius: 6px;
+            width: auto;
+            margin-top: 20px;
+        }
+
+        .form-group input[type="submit"]:hover {
+            background-color: #218838;
+        }
+
+        /* Flash message de sucesso */
+        .flash-message {
+            background-color: #28a745;
+            color: white;
+            text-align: center;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 20px auto;
+            max-width: 600px;
+            animation: fadeOut 6s forwards; /* A mensagem desaparece após 6 segundos */
+        }
+
+        /* Animação de fade-out */
+        @keyframes fadeOut {
+            0% {
+                opacity: 1;
+                visibility: visible;
+            }
+            100% {
+                opacity: 0;
+                visibility: hidden; /* Torna o elemento invisível ao final */
+            }
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .menu {
+                width: 200px;
+            }
+
+            .container {
+                margin-left: 0;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Menu estático à esquerda -->
+    <div class="menu">
+    </div>
+    {% include 'menu.html' %}
+    <!-- Área de conteúdo à direita -->
+    <div class="container">
+        <h1>Despesas</h1>
+
+        <!-- Exibir Mensagens de Sucesso ou Erro -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="messages">
+                    {% for category, message in messages %}
+                        <div class="flash-message">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <form action="/despesas" method="POST">
+            <div class="form-group">
+                <label for="descricao">Descrição:</label>
+                <input type="text" id="descricao" name="descrição" required>
+            </div>
+            <div class="form-group">
+                <label for="valor">Valor:</label>
+                <input type="number" id="valor" name="valor" required>
+            </div>
+            <div class="form-group">
+                <label for="data">Data:</label>
+                <input type="date" id="data" name="data" required>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Registrar Despesa">
+            </div>
+        </form>
+    </div>
+</body>
+</html>

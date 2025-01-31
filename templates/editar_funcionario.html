@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Funcionário</title>
+    <style>
+        /* Estilo geral */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 50%;
+            margin: 50px auto;
+            margin-right: 200px;
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+             border-bottom: 2px solid #007BFF;
+        }
+
+        .form-group {
+            margin-bottom: 1px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        .form-group input[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .form-group input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+
+        .messages {
+            text-align: center;
+            margin: 0 auto 20px auto;
+            max-width: 80%;
+        }
+
+        .alert {
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            font-size: 16px;
+            display: inline-block;
+        }
+
+        .alert-success {
+            background-color: #28a745;
+            color: white;
+            border-left: 5px solid #218838;
+        }
+
+        .alert-error {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .menu {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .menu button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 15px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 8px;
+        }
+
+        .menu button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+   <div class="menu">
+    <label>
+        <button>Clientes</button>
+        <input type="checkbox">
+        <div class="submenu">
+            <a href="/cadastro">Cadastrar Cliente</a>
+            <a href="/editar">Editar Cliente</a>
+            <a href="/excluir_cliente">Excluir Cliente</a>
+            <a href="/clientes">Visualizar Clientes</a>
+        </div>
+    </label>
+    <label>
+        <button>Funcionários</button>
+        <input type="checkbox">
+        <div class="submenu">
+            <a href="/cadastro_funcionario">Cadastrar Funcionário</a>
+            <a href="/editar_funcionario">Editar Funcionário</a>
+            <a href="/excluir_funcionario">Excluir Funcionário</a>
+            <a href="/funcionarios">Visualizar Funcionários</a>
+        </div>
+    </label>
+</div>
+
+    <div class="container">
+        <!-- Exibir mensagens de sucesso ou erro -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="messages">
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+        {% include 'menu.html' %}
+        <h1>Editar Funcionário</h1>
+
+        <form action="/editar_funcionario" method="POST">
+        <div class="form-group">
+            <label for="nome_funcionario">Nome do Funcionário:</label>
+            <input type="text" id="nome_funcionario" name="nome_funcionario" value="{{ funcionario[1] if cliente else '' }}" required>
+        </div>
+            <div class="form-group">
+                <label for="nome">Nome:</label>
+                <input type="text" id="nome" name="nome" value="{{ funcionario[1] if funcionario else '' }}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="contato">Contato:</label>
+                <input type="text" id="contato" name="contato" value="{{ funcionario[2] if funcionario else '' }}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="cargo">Cargo:</label>
+                <input type="text" id="cargo" name="cargo" value="{{ funcionario[3] if funcionario else '' }}" required>
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="Atualizar Funcionário">
+            </div>
+        </form>
+    </div>
+</body>
+</html>
