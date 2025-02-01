@@ -36,7 +36,7 @@ def login_user():
         cursor = conexao.cursor()
 
         # Executa o comando SQL para buscar os parâmetros indicados no login e senha
-        cursor.execute('SELECT senha from administradores WHERE login = %s', (login,))
+        cursor.execute('SELECT senha from aprovcar.administradores WHERE login = %s', (login,))
 
         usuario = cursor.fetchone()
         cursor.close()
@@ -78,18 +78,17 @@ def cadastrar():
     if request.method == 'POST':
         nome = request.form['nome']
         contato = request.form['contato']
-        veiculo = request.form['veiculo']
-        data_entrada = request.form['data_entrada']
-        data_saida = request.form['data_saida']
-        valor_orcamento1 = request.form['valor_orcamento']
-        valor_orcamento = float(valor_orcamento1)
+        cpf = request.form['cpf']
+        data_nascimento = request.form['data_nascimento']
+        data_venda = request.form['data_venda']
+        email = request.form['email']
 
         # CREAT
         conexao = conexao_bd()
         cursor = conexao.cursor()
-        comando = (f'INSERT INTO clientes (nome, contato, veiculo, data_entrada, data_saida, valor_orcamento) '
+        comando = (f'INSERT INTO vendas (nome, contato, cpf, data_nascimento, data_venda, email) '
                    f'VALUES (%s, %s, %s, %s, %s, %s);')
-        cursor.execute(comando, (nome, contato, veiculo, data_entrada, data_saida, valor_orcamento))
+        cursor.execute(comando, (nome, contato, cpf, data_nascimento, data_venda, email))
         conexao.commit()
 
         cursor.close()
@@ -501,8 +500,6 @@ def relatorio_despesas():
             flash('Não foi encontrada nenhuma despesa no período!', 'error')
             return render_template('relatorio_despesas.html')
 
-
-
         print(resultado)
 
         total_despesas = sum(despesa[3] for despesa in resultado)  # Despesa[3] é o valor
@@ -512,13 +509,13 @@ def relatorio_despesas():
     return render_template('relatorio_despesas.html', despesa=despesa, total_despesas=total_despesas)
 
 
-'''@app.route('/relatorio_geral', methods=['GET', 'POST'])
+@app.route('/relatorio_geral', methods=['GET', 'POST'])
 def relatorio_geral():
     conexao = conexao_bd()
     cursor = conexao.cursor()
 
     if request.method == 'POST':
-        data_inicio = request.form.get('')'''
+        data_inicio = request.form.get('')
 
 
 @app.route('/despesas', methods=['GET', 'POST'])

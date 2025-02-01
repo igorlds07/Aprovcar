@@ -15,46 +15,19 @@
         /* Corpo da página */
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
+            background: linear-gradient(to bottom, #000000, #333333);
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            padding-top: 10px;
-        }
-
-        /* Menu no canto superior esquerdo */
-        .menu {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .menu button {
-            background-color: #007bff; /* Azul */
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            border-radius: 5px;
-            transition: background-color 0.3s ease;
-            width: 200px; /* Tamanho fixo para os botões */
-        }
-
-        .menu button:hover {
-            background-color: #0056b3; /* Azul mais escuro */
+            padding-top: 30px;
         }
 
         /* Contêiner principal */
         .container {
-            background-color: #fff;
-            padding: 30px;
-            margin-top: -70px; /* Move o contêiner para cima */
+            background-color: #C0C0C0;
+            padding: 50px;
+            margin-top: 70px; /* Move o contêiner para cima */
             border-radius: 8px;
             width: 900%;
             max-width: 700px;
@@ -65,8 +38,11 @@
 
         /* Título da página */
         h1 {
-            color: #333;
-            font-size: 25px;
+            color: #000000;
+            font-size: 35px;
+            position: relative;
+            top: -30px; /* Move o título 20px para cima */
+            border-bottom: 2px solid #32CD32;
         }
 
         /* Estilo para as mensagens de sucesso ou erro */
@@ -138,7 +114,7 @@
 
         .form-group label {
             font-size: 16px;
-            color: #555;
+            color: #000000;
         }
 
         .form-group input[type="text"] {
@@ -152,7 +128,7 @@
         .form-group button {
             width: 100%;
             padding: 12px;
-            background-color: #dc3545;
+            background-color: #32CD32;
             color: white;
             border: none;
             font-size: 18px;
@@ -162,36 +138,12 @@
         }
 
         .form-group button:hover {
-            background-color: #c82333;
+            background-color: #008000;
         }
     </style>
 </head>
 <body>
 <div class="menu">
-        <label>
-            <button>Clientes</button>
-            <div class="submenu">
-                <a href="/cadastrar">Cadastrar Cliente</a>
-                <a href="/editar">Editar Cliente</a>
-                <a href="/excluir_cliente">Excluir Cliente</a>
-                <a href="/clientes">Visualizar Clientes</a>
-            </div>
-        </label>
-        <label>
-            <button>Funcionários</button>
-            <div class="submenu">
-                <a href="/funcionarios">Cadastrar Funcionário</a>
-                <a href="/editar_funcionario">Editar Funcionário</a>
-                <a href="/excluir_funcionario">Excluir Funcionário</a>
-                <a href="/funcionarios">Visualizar Funcionários</a>
-            </div>
-        </label>
-    <label>
-        <div class="submenu">
-            <a href="/relatorio_orcamentos">Relatórios Orçamentos</a>
-        </div>
-        </label>
-
     {% include 'menu.html' %}
       <!-- Contêiner de Exclusão -->
     <div class="container">
