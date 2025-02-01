@@ -14,64 +14,10 @@
 
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
+            background: linear-gradient(to bottom, #000000, #333333);
             margin-bottom: 80px;
         }
 
-        /* Menu lateral fixo */
-        .menu {
-            position: fixed;
-            top: 0;
-            left: 0;
-            height: 100%;
-            width: 250px;
-            background-color: #007bff;
-            padding: 20px 10px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-        }
-
-        .menu label {
-            display: block;
-        }
-
-        .menu button {
-            background-color: #0056b3;
-            color: white;
-            border: none;
-            padding: 10px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            border-radius: 5px;
-            text-align: left;
-            width: 100%;
-            transition: background-color 0.3s ease;
-        }
-
-        .menu button:hover {
-            background-color: #003f88;
-        }
-
-        .submenu {
-            display: none;
-            flex-direction: column;
-            margin-top: 5px;
-            margin-left: 15px;
-        }
-
-        .submenu a {
-            text-decoration: none;
-            color: white;
-            font-size: 14px;
-            margin: 5px 0;
-        }
-
-        .submenu a:hover {
-            color: #dcdcdc;
-        }
 
         input[type="checkbox"] {
             display: none;
@@ -83,9 +29,9 @@
 
         h1 {
             text-align: center;
-            color: #333;
+            color: #000000;
             margin-bottom: 30px;
-             border-bottom: 2px solid #007BFF;
+             border-bottom: 2px solid #32CD32;
         }
 
         .success-message {
@@ -106,7 +52,7 @@
             max-width: 900px; /* Largura máxima do formulário */
             width: 100%;
             margin-top: 50px; /* Distância do topo */
-            background: #fff;
+            background: #C0C0C0;
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
@@ -118,7 +64,7 @@
         .form-group label {
             display: block;
             font-weight: bold;
-            color: #555;
+            color: #000000;
             margin-bottom: 8px;
         }
 
@@ -129,8 +75,8 @@
             border: 1px solid #ddd;
             border-radius: 6px;
             font-size: 16px;
-            color: #333;
-            background-color: #f9f9f9;
+            color: #696969;
+            background-color: #DCDCDC;
             transition: border-color 0.3s;
         }
 
@@ -141,7 +87,7 @@
         }
 
         .form-group input[type="submit"] {
-            background-color: #28a745;
+            background-color: #32CD32;
             color: white;
             border: none;
             cursor: pointer;
@@ -152,7 +98,7 @@
         }
 
         .form-group input[type="submit"]:hover {
-            background-color: #218838;
+            background-color: #008000;
         }
 
         /* Ajustes para telas menores */
@@ -218,40 +164,7 @@
 <body>
     <!-- Menu Lateral -->
     <div class="menu">
-        <label>
-            <button>Clientes</button>
-            <input type="checkbox">
-        </label>
-        <div class="submenu">
-            <a href="/cadastro_cliente">Cadastrar Cliente</a>
-            <a href="/editar">Editar Cliente</a>
-            <a href="/excluir_cliente">Excluir Cliente</a>
-            <a href="/clientes">Visualizar Clientes</a>
-        </div>
-        <label>
-            <button>Funcionários</button>
-            <input type="checkbox">
-        </label>
-        <div class="submenu">
-            <a href="/funcionarios">Cadastrar Funcionário</a>
-            <a href="/editar_funcionario">Editar Funcionário</a>
-            <a href="/excluir_funcionario">Excluir Funcionário</a>
-            <a href="/funcionarios">Visualizar Funcionários</a>
-        </div>
-        <label>
-            <button>Relatórios</button>
-            <input type="checkbox">
-        </label>
-        <div class="submenu">
-            <a href="/relatorio_orcamentos">Relatórios Orçamentos</a>
-        </div>
-         <label>
-            <button>Despesas</button>
-            <input type="checkbox">
-        </label>
-        <div class="submenu">
-            <a href="/funcionarios">Inserir despesas</a>
-        </div>
+
     </div>
     {% include 'menu.html' %}
     <!-- Conteúdo da Página de Cadastro -->
@@ -285,20 +198,20 @@
                 <input type="text" id="contato" name="contato" required>
             </div>
             <div class="form-group">
-                <label for="veiculo">Veículo:</label>
-                <input type="text" id="veiculo" name="veiculo" required>
+                <label for="cpf">CPF:</label>
+                <input type="text" id="cpf" name="cpf" required>
             </div>
             <div class="form-group">
-                <label for="data_entrada">Data de Entrada:</label>
-                <input type="date" id="data_entrada" name="data_entrada" required>
+                <label for="data_nascimento">Data de Nascimento:</label>
+                <input type="date" id="data_nascimento" name="data_nascimento" required>
             </div>
             <div class="form-group">
-                <label for="data_saida">Data de Saída:</label>
-                <input type="date" id="data_saida" name="data_saida">
+                <label for="data_venda">Data da Venda:</label>
+                <input type="date" id="data_venda" name="data_venda">
             </div>
             <div class="form-group">
-                <label for="valor_orcamento">Valor Orçamento:</label>
-                <input type="number" id="valor_orcamento" name="valor_orcamento" required>
+                <label for="email">Email:</label>
+                <input type="text" id="email" name="email" required>
             </div>
             <div class="form-group">
                 <input type="submit" value="Cadastrar Cliente">
