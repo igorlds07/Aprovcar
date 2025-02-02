@@ -19,21 +19,24 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            height: 150vh;
             padding-top: 30px;
+            overflow-y: auto; /* Ativa o scroll da página */
         }
 
         /* Contêiner principal */
         .container {
             background-color: #C0C0C0;
-            padding: 50px;
-            margin-top: 70px; /* Move o contêiner para cima */
+            padding: 38px 20px;
+            margin-top: 10px; /* Move o contêiner para cima */
             border-radius: 8px;
             width: 900%;
             max-width: 700px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            text-align: center;
+            position: relative;
+
             margin-left: 450px; /* Para não sobrepor o menu */
+            height: auto; /* Permite que o container tenha altura adaptativa */
         }
 
         /* Título da página */
@@ -43,6 +46,9 @@
             position: relative;
             top: -30px; /* Move o título 20px para cima */
             border-bottom: 2px solid #32CD32;
+            margin-right: 30px;
+            text-align: center; /* Alinha o texto horizontalmente */
+            width: 100%; /* Garante que o h1 ocupe toda a largura disponível */
         }
 
         /* Estilo para as mensagens de sucesso ou erro */
@@ -115,6 +121,7 @@
         .form-group label {
             font-size: 16px;
             color: #000000;
+            font-weight: bold;
         }
 
         .form-group input[type="text"] {
@@ -166,7 +173,7 @@
         <form method="POST" action="{{ url_for('excluir_cliente') }}">
             <div class="form-group">
                 <label for="nome">Nome do Cliente:</label>
-                <input type="text" id="nome" name="nome" value="{{ cliente[1] if cliente else '' }}" required>
+                <input type="text" id="nome" name="nome" value="{{ cliente[1] if cliente else '' }}" placeholder="Digite o nome do cliente">
             </div>
 
             <div class="form-group">
@@ -188,8 +195,13 @@
                 </div>
 
                 <div class="form-group">
-                    <label>Veículo:</label>
+                    <label>CPF:</label>
                     <input type="text" value="{{ cliente[3] }}" readonly>
+                </div>
+
+                <div class="form-group">
+                    <label>Data da Venda:</label>
+                    <input type="text" value="{{ cliente[5] }}" readonly>
                 </div>
 
                 <input type="hidden" name="nome" value="{{ cliente[1] }}">
@@ -203,6 +215,7 @@
         {% endif %}
 
     </div>
+
 
 </body>
 </html>

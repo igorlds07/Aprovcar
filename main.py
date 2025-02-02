@@ -107,58 +107,45 @@ def cadastrar():
 # Rota para editar os clientes já cadastrados no BANCO DE DADOS
 @app.route('/editar', methods=['GET', 'POST'])
 def editar_cliente():
-    """  Função para editar as informações de um cliente já cadastrado.
-    Recebe o nome do cliente, busca os dados no banco de dados e permite ao administrador atualizar as informações."""
+    """Editar informações de um cliente cadastrado"""
 
+    conexao = conexao_bd()
     cliente = None
-    error = []
-    conexao = conexao_bd()  # Chama a função para obter a conexão  com o Banco de dados
 
-    # condição para atualizar o cliente
+    if request.method == 'GET' and 'cliente' in request.args:
+        nome_cliente = request.args.get('cliente')
+        cursor = conexao.cursor()
+        cursor.execute("SELECT * FROM vendas WHERE nome = %s", (nome_cliente,))
+        cliente = cursor.fetchone()
+        cursor.close()
+        conexao.close()
+
+        if not cliente:
+            flash('Cliente não encontrado!', 'error')
+            return redirect(url_for('editar_cliente'))
+
     if request.method == 'POST':
-        cliente = request.form['cliente']
+        nome_original = request.form['cliente_original']
         nome = request.form['nome']
         contato = request.form['contato']
-        veiculo = request.form['veiculo']
-        data_entrada = request.form['data_entrada']
-        data_saida = request.form['data_saida']
-        valor_orcamentos = request.form['valor_orcamento']
-        valor_orcamento = float(valor_orcamentos)
-
-        # Condição para verificar se houve conexão com o banco de dados
-        if conexao is None:
-            return render_template('editar.html', error=['Erro na conexão com o banco de dados.'])
+        cpf = request.form['cpf']
+        data_nascimento = request.form['data_nascimento']
+        data_venda = request.form['data_venda']
+        email = request.form['email']
 
         cursor = conexao.cursor()
-        cursor.execute("SELECT * FROM clientes WHERE nome = %s", (cliente,))
+        cursor.execute("""UPDATE vendas SET nome = %s, contato = %s, cpf = %s, data_nascimento = %s,
+                          data_venda = %s, email = %s WHERE nome = %s""",
+                       (nome, contato, cpf, data_nascimento, data_venda, email, nome_original))
+        conexao.commit()
 
-        cliente_existente = cursor.fetchone()
-        print(cliente_existente)
-        # UPDATE
-        if cliente_existente:
+        cursor.close()
+        conexao.close()
 
-            # Comando em SQL para atualizar o cliente escolhido
-            cursor.execute("""UPDATE clientes SET nome = %s, contato = %s, veiculo = %s, data_entrada = %s,
-                          data_saida = %s, valor_orcamento = %s WHERE nome = %s""",
-                           (nome, contato, veiculo, data_entrada, data_saida, valor_orcamento, cliente))
-            conexao.commit()
+        flash('Cliente atualizado com sucesso!', 'success')
+        return redirect(url_for('editar_cliente'))
 
-            cursor.close()
-            conexao.close()  # Fecha a conexão com o  banco de dados
-
-            flash('Cliente atualizado com sucesso!', 'success')  # Mensagem de sucesso com flash
-            return redirect(url_for('editar_cliente'))  # Redireciona para o formulário de edição novamente
-
-        else:
-            cursor.close()  # Fechar o cursor se o cliente não for encontrado
-
-            conexao.close()  # Fechar a conexão
-
-            flash('Cliente não encontrado!', 'error')  # Mensagem de erro com flash
-
-            return redirect(url_for('editar_cliente'))  # Redi
-
-    return render_template('editar.html', cliente=None)  # Retorna a página e edição de clientes
+    return render_template('editar.html', cliente=cliente)
 
 
 # Rota para excluir clientes no banco de dados
@@ -181,7 +168,7 @@ def excluir_cliente():
             cursor = conexao.cursor()
 
             # DELETE
-            cursor.execute('SELECT * FROM clientes WHERE nome = %s;', (nome_cliente,))
+            cursor.execute('SELECT * FROM vendas WHERE nome = %s;', (nome_cliente,))
             cliente = cursor.fetchone()
             print(cliente)
 
@@ -192,7 +179,7 @@ def excluir_cliente():
 
                     cursor = conexao.cursor()
                     # Comando em SQL para deletar o cliente
-                    comando = f'DELETE FROM clientes WHERE nome = "{nome_cliente}"'
+                    comando = f'DELETE FROM vendas WHERE nome = "{nome_cliente}"'
                     cursor.execute(comando)
                     print(f'excluindo cliente {nome_cliente}')
 
