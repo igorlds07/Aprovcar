@@ -86,7 +86,7 @@ def cadastrar():
         # CREAT
         conexao = conexao_bd()
         cursor = conexao.cursor()
-        comando = (f'INSERT INTO vendas (nome, contato, cpf, data_nascimento, data_venda, email) '
+        comando = (f'INSERT INTO clientes (nome, contato, cpf, data_nascimento, data_venda, email) '
                    f'VALUES (%s, %s, %s, %s, %s, %s);')
         cursor.execute(comando, (nome, contato, cpf, data_nascimento, data_venda, email))
         conexao.commit()
@@ -115,7 +115,7 @@ def editar_cliente():
     if request.method == 'GET' and 'cliente' in request.args:
         nome_cliente = request.args.get('cliente')
         cursor = conexao.cursor()
-        cursor.execute("SELECT * FROM vendas WHERE nome = %s", (nome_cliente,))
+        cursor.execute("SELECT * FROM clientes WHERE nome = %s", (nome_cliente,))
         cliente = cursor.fetchone()
         cursor.close()
         conexao.close()
@@ -134,7 +134,7 @@ def editar_cliente():
         email = request.form['email']
 
         cursor = conexao.cursor()
-        cursor.execute("""UPDATE vendas SET nome = %s, contato = %s, cpf = %s, data_nascimento = %s,
+        cursor.execute("""UPDATE clientes SET nome = %s, contato = %s, cpf = %s, data_nascimento = %s,
                           data_venda = %s, email = %s WHERE nome = %s""",
                        (nome, contato, cpf, data_nascimento, data_venda, email, nome_original))
         conexao.commit()
@@ -168,7 +168,7 @@ def excluir_cliente():
             cursor = conexao.cursor()
 
             # DELETE
-            cursor.execute('SELECT * FROM vendas WHERE nome = %s;', (nome_cliente,))
+            cursor.execute('SELECT * FROM clientes WHERE nome = %s;', (nome_cliente,))
             cliente = cursor.fetchone()
             print(cliente)
 
@@ -179,7 +179,7 @@ def excluir_cliente():
 
                     cursor = conexao.cursor()
                     # Comando em SQL para deletar o cliente
-                    comando = f'DELETE FROM vendas WHERE nome = "{nome_cliente}"'
+                    comando = f'DELETE FROM clientes WHERE nome = "{nome_cliente}"'
                     cursor.execute(comando)
                     print(f'excluindo cliente {nome_cliente}')
 
@@ -250,21 +250,26 @@ def funcionarios():
     funcionario = []
 
     if request.method == 'GET' and 'ver_todos' in request.args:
-        comando = 'SELECT * FROM funcionários;'
+        comando = 'SELECT * FROM vendedor;'
         cursor.execute(comando, )
         funcionario = cursor.fetchall()
         print(funcionario)
+        if not funcionario:
+            flash('Nenhum vendedor foi encontrado !', 'error')
 
         return render_template('funcionarios.html', funcionarios=funcionario)
 
     if request.method == 'POST':
-        nome = request.form['nome']
-        contato = request.form['contato']
-        cargo = request.form['cargo']
+        nome = request.form['nome'].title()
+        cpf = request.form['cpf']
+        contato = request.form.get('contato')
+        data_nascimento = request.form['data_nascimento']
+        data_admissao = request.form['data_admissao']
 
         # Verifica se já existe um funcionário com esse nome (ou outro identificador)
-        comando = "INSERT INTO funcionários (nome, contato, cargo) VALUES (%s, %s, %s);"
-        cursor.execute(comando, (nome, contato, cargo))
+        comando = ("INSERT INTO vendedor (nome, cpf, contato, data_nascimento, data_admissão)"
+                   " VALUES (%s, %s, %s, %s, %s);")
+        cursor.execute(comando, (nome, cpf, contato, data_nascimento, data_admissao))
         conexao.commit()
         flash('Funcionário cadastrado com sucesso !', 'success')
         funcionarios_cadastrados = cursor.fetchall()
@@ -323,27 +328,29 @@ def funcionarios_atualizar():
 def excluir_funcionario():
     conexao = conexao_bd()
     cursor = conexao.cursor()
-    funcionario = None
+    vendedor = None
     if request.method == 'POST':
         nome = request.form.get('nome')
 
         if nome:
-            cursor.execute('SELECT * FROM funcionários WHERE nome = %s;', (nome,))
-            funcionario = cursor.fetchone()
+            cursor.execute('SELECT * FROM vendedor WHERE nome = %s;', (nome,))
+            vendedor = cursor.fetchone()
 
-            if funcionario:
+            if vendedor:
                 if request.form.get('confirmar') == 'sim':
                     print('botão pressionado')
 
                     cursor = conexao.cursor()
                     # Comando em SQL para deletar o cliente
-                    cursor.execute(f'DELETE FROM funcionários WHERE nome = "{funcionario}";')
-                    print(f'excluindo cliente {funcionario}')
+                    comando = f'DELETE FROM vendedor WHERE nome = "{nome}"'
+
+                    cursor.execute(comando)
+                    print(f'excluindo cliente {vendedor}')
 
                     conexao.commit()
                     print(f'cliente excluido com  successo')
-                    flash(f'Funcionário {funcionario[1]} excluído com sucesso!', 'success')
-                    return render_template('excluir_funcionario.html', funcionario=None)  # Redireciona após exclusão
+                    flash(f'Vendedor {vendedor[1]} excluído com sucesso!', 'success')
+                    return render_template('excluir_funcionario.html', vendedor=None)  # Redireciona após exclusão
 
             else:
                 flash('Funcionário não encontrado!', 'error')
@@ -352,44 +359,53 @@ def excluir_funcionario():
             flash('Por favor, informe o nome do cliente.', 'warning')  # Senão for passado
             return redirect(url_for('excluir_funcionario'))
 
-    return render_template('excluir_funcionario.html', funcionario=funcionario)
+    return render_template('excluir_funcionario.html', vendedor=vendedor)
 
 
 @app.route('/editar_funcionario', methods=['GET', 'POST'])
 def editar_funcionario():
     conexao = conexao_bd()
     cursor = conexao.cursor()
-    funcionario = None
+    vendedor = None
     error = None
 
-    if request.method == 'POST':
-        funcionaro_nome = request.form['nome_funcionario']
-        nome = request.form['nome']
-        contato = request.form['contato']
-        cargo = request.form['cargo']
-
-        cursor.execute('SELECT * FROM funcionários WHERE nome = %s;', (funcionaro_nome,))
-        funcionario = cursor.fetchone()
-        print(funcionario)
-
-        if funcionario:
-            cursor.execute("""UPDATE funcionários SET nome = %s, contato = %s, cargo = %s, WHERE nome = %s""",
-                           (nome, contato, cargo, funcionario))
-            conexao.commit()
-
-            cursor.close()
-            conexao.close()  # Fecha a conexão com o  banco de dados
-
-            flash('Funcionário atualizado com sucesso!', 'success')  # Mensagem de sucesso com flash
-            return redirect(url_for('editar_funcionario'))  # Redireciona para o formulário de edição novamente
-
-        else:
+    if request.method == 'GET' and 'vendedor' in request.args:
+        nome_vendedor = request.args.get('vendedor')
+        cursor = conexao.cursor()
+        cursor.execute("SELECT * FROM vendedor WHERE nome = %s", (nome_vendedor,))
+        vendedor = cursor.fetchone()
+        print(vendedor)
+        cursor.close()
+        conexao.close()
+        if not vendedor:
             flash('Funcionário não encontrado !', 'error')
             conexao.close()
             cursor.close()
             return redirect(url_for('editar_funcionario'))
 
-    return render_template('editar_funcionario.html', funcionario=None)
+    if request.method == 'POST':
+        nome_original = request.form['nome_original']
+        nome = request.form['nome']
+        cpf = request.form['cpf']
+        contato = request.form['contato']
+        data_nascimento = request.form['data_nascimento']
+        data_admissao = request.form['data_admissao']
+
+        cursor.execute(
+            """UPDATE vendedor SET nome = %s, cpf = %s, contato = %s,
+                data_nascimento = %s, data_admissão = %s WHERE nome = %s""",
+            (nome, cpf, contato, data_nascimento, data_admissao, nome_original))
+
+        conexao.commit()
+        print('ATUALIZADO COM SUCESSO')
+
+        cursor.close()
+        conexao.close()  # Fecha a conexão com o  banco de dados
+
+        flash('Vendedor atualizado com sucesso!', 'success')  # Mensagem de sucesso com flash
+        return redirect(url_for('editar_funcionario'))  # Redireciona para o formulário de edição novamente
+
+    return render_template('editar_funcionario.html', vendedor=vendedor)
 
 
 @app.route('/relatorio_orcamentos', methods=['GET', 'POST'])
@@ -529,6 +545,11 @@ def despesas():
     return render_template('despesas.html')
 
 
+'''@app.route('/vendas', metohds=['GET']):
+def vendas():'''
+
+
+
 '''@app.route('calcular_orçamento', methods=['GET', 'POST'])
 def calcular_orcamento():
     resposta = None
@@ -539,7 +560,6 @@ def calcular_orcamento():
         if valor_orcamento and valor_despesas:
             caluculo = (valor_orcamento + valor_despesas)
             resposta = caluculo + valor_despesas + (caluculo * 10/100 )'''
-
 
 # Condição para verificar se o projeto esta sendo executado diretamente
 if __name__ == '__main__':
