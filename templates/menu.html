@@ -8,8 +8,8 @@
          /* Estilo para a logo */
         .logo {
             width: 210px; /* Tamanho da logo */
-            margin-bottom: 25px; /* Espaçamento abaixo da logo */
-            margin-right: 5px;
+            margin-bottom: 10px; /* Espaçamento abaixo da logo */
+            margin-left: 10px;
         }
         /* Estilo do menu fixo */
         .menu {
@@ -25,6 +25,9 @@
             flex-direction: column;
             gap: 20px;
         }
+        .sair {
+    margin-top: 30px; /* Empurra o botão para o final do menu */
+}
 
         /* Estilo para os itens principais do menu */
         .menu-item {
@@ -100,6 +103,14 @@
     <img class="logo" src="{{ url_for('static', filename='img/aprovcar.png') }}" alt="Logo da Aprovcar">
         <!-- Menu principal -->
         <div class="menu-item">
+            <button tabindex="0">Caixa Diário</button>
+            <div class="submenu">
+                <a href="/caixa_diario">Visualizar</a>
+
+            </div>
+        </div>
+
+        <div class="menu-item">
             <button tabindex="0">Clientes</button>
             <div class="submenu">
                 <a href="/cadastro">Cadastrar Cliente</a>
@@ -108,22 +119,38 @@
                 <a href="/clientes">Visualizar Clientes</a>
             </div>
         </div>
-        <div class="menu-item">
-            <button tabindex="0">Funcionários</button>
+
+         <div class="menu-item">
+            <button tabindex="0">Vendas</button>
             <div class="submenu">
-                <a href="/funcionarios">Cadastrar Funcionário</a>
+                <a href="/vendas">Cadastrar Vendas</a>
+            </div>
+        </div>
+         <div class="menu-item">
+            <button tabindex="0">Estoque</button>
+            <div class="submenu">
+                <a href="/estoque">Adicionar Veículo</a>
                 <a href="/editar_funcionario">Editar Funcionário</a>
                 <a href="/excluir_funcionario">Excluir Funcionário</a>
                 <a href="/funcionarios">Visualizar Funcionários</a>
+            </div>
+        </div>
+
+        <div class="menu-item">
+            <button tabindex="0">Funcionários</button>
+            <div class="submenu">
+                <a href="/funcionarios">Cadastrar e Visualizar</a>
+                <a href="/editar_funcionario">Editar Funcionário</a>
+                <a href="/excluir_funcionario">Excluir Funcionário</a>
             </div>
         </div>
          <!-- Novo botão: Relatórios -->
         <div class="menu-item">
             <button tabindex="0">Relatórios</button>
             <div class="submenu">
-                <a href="/relatorio_orcamentos">Relatório de Orçamentos</a>
+                <a href="/relatorio_vendas">Relatório de Vendas</a>
                 <a href="/relatorio_despesas">Relatório de Despesas</a>
-                <a href="/relatorio_funcionarios">Relatório de Funcionários</a>
+                <a href="/relatorio_vendedor">Relatório de Vendedores</a>
             </div>
         </div>
         <div class="menu-item">
@@ -132,12 +159,13 @@
                 <a href="/despesas">Inserir despesas</a>
             </div>
         </div>
-        <div class="menu-item">
+        <div class="menu-item sair">
             <button tabindex="0">Sair</button>
             <div class="submenu">
                 <a href="/">Confirmar</a>
             </div>
         </div>
     </div>
+
 </body>
 </html>

@@ -408,8 +408,8 @@ def editar_funcionario():
     return render_template('editar_funcionario.html', vendedor=vendedor)
 
 
-@app.route('/relatorio_orcamentos', methods=['GET', 'POST'])
-def relatorio_orcamentos():
+@app.route('/relatorio_vendas', methods=['GET', 'POST'])
+def relatorio_vendas():
     conexao = conexao_bd()
     cursor = conexao.cursor()
     resultados = None
@@ -426,48 +426,60 @@ def relatorio_orcamentos():
             if data_inicio > data_fim:
                 flash('A data de inicío não pode ser maior que a data de fim!', 'error')
                 return render_template(
-                    'relatorio_orcamentos.html', )
+                    'relatorio_vendas.html', )
 
         # Consulta SQL para buscar orçamentos no período
         query = """
-            SELECT idclientes, nome, contato, veiculo, data_entrada, data_saida, valor_orcamento
-            FROM clientes
-            WHERE data_entrada BETWEEN %s AND %s
+            SELECT idvendas, idvendedor, idcarro, Nome_cliente, Data_venda, Comissao_carro, Retorno_finaciamento, taxa_financiamento,
+             Comissao_total, Transferencia, Corretor, Dizimo, Valor_liquido
+            FROM vendas
+            WHERE data_venda BETWEEN %s AND %s
         """
         cursor.execute(query, (data_inicio.strftime('%Y-%m-%d'), data_fim.strftime('%Y-%m-%d')))
         resultados = cursor.fetchall()
 
         if not resultados:
-            flash('Não foi encontrado nenhum orçamento dentro do período!', 'error')
-            return render_template('relatorio_orcamentos.html')
+            flash('Não foi encontrado nenhuma venda dentro do período!', 'error')
+            return render_template('relatorio_vendas.html')
 
             # Se o botão para gerar Excel foi pressionado
         if gerar_excel:
             # Cria um DataFrame com os resultados
-            colunas = ["ID", "Nome", "Contato", "Veículo", "Data Entrada", "Data Saída", "Valor Orçamento"]
+            colunas = [
+                "Id vendas", "Id vendedor", "Id carro", "Nome Cliente", "Data Venda" "Comissão Carro", "Retorno finaciamento",
+                "Taxa Financiamento", "Comissão Total", "Transfêrencia", "Corretor", "Dízimo", "Valor Liquído"]
             df = pd.DataFrame(resultados, columns=colunas)
 
             # Salva o DataFrame em um arquivo Excel na memória
             output = BytesIO()
-            df.to_excel(output, index=False, sheet_name='Relatório de Orçamentos')
+            df.to_excel(output, index=False, sheet_name='Relatório de Vendas')
             output.seek(0)
 
             # Configura a resposta para download
             response = make_response(output.getvalue())
-            response.headers["Content-Disposition"] = "attachment; filename=relatorio_orcamentos.xlsx"
+            response.headers["Content-Disposition"] = "attachment; filename=relatorio_vendas.xlsx"
             response.headers["Content-Type"] = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
             return response
 
+        query = """
+                       SELECT SUM(valor_liquido) 
+                       FROM vendas
+                        WHERE data_venda BETWEEN %s AND %s
+                   """
+        cursor.execute(query, (data_inicio.strftime('%Y-%m-%d'), data_fim.strftime('%Y-%m-%d')))
+        total_entradas = cursor.fetchone()[0] or 0
+
         total = len(resultados)
 
-        message = f'Foram realizados {total} orçamentos !'
+        message = (f'Foram realizados {total} Venda(s) !<br>'
+                   f'Total Liquído: R${total_entradas:.2f}')
 
         conexao.close()
         cursor.close()
 
-        return render_template('relatorio_orcamentos.html', resultados=resultados, message=message)
+        return render_template('relatorio_vendas.html', resultados=resultados, message=message)
 
-    return render_template('relatorio_orcamentos.html', resultados=resultados)
+    return render_template('relatorio_vendas.html', resultados=resultados)
 
 
 @app.route('/relatorio_despesas', methods=['GET', 'POST'])
@@ -531,8 +543,8 @@ def despesas():
         data = request.form['data']
         valor = request.form['valor']
 
-        cursor.execute('INSERT INTO despesas(descrição, data, valor)'
-                       'VALUES(%s, %s,%s);', (descricao, data, valor))
+        cursor.execute('INSERT INTO despesas(descrição, valor, data_despesa)'
+                       'VALUES(%s, %s,%s);', (descricao, valor, data))
 
         conexao.commit()
         conexao.close()
@@ -545,9 +557,151 @@ def despesas():
     return render_template('despesas.html')
 
 
-'''@app.route('/vendas', metohds=['GET']):
-def vendas():'''
+@app.route('/vendas', methods=['GET', 'POST'])
+def vendas():
+    conexao = conexao_bd()
+    cursor = conexao.cursor()
 
+    # Rota para registrar uma venda
+    if request.method == 'POST':
+        idvendedor = request.form.get('idvendedor')
+        idcarro = request.form.get('idcarro')
+        idcliente = request.form.get('idCliente')
+        nome_cliente = request.form['Nome_cliente']
+        data_venda = request.form['data_venda']
+        comissao_carro = float(request.form['Comissao_carro'])
+        retorno_financiamento = float(request.form['Retorno_financiamento'])
+        taxa_financiamento = float(request.form['Taxa_financiamento'])
+        transferencia = float(request.form['Transferencia'])
+        corretor = float(request.form['Corretor'])
+        dizimo = float(request.form['Dizimo'])
+
+        # Validar se o vendedor existe
+        cursor.execute("SELECT * FROM vendedor WHERE idvendedor = %s", (idvendedor,))
+        vendedor = cursor.fetchone()
+        if not vendedor:
+            flash("Vendedor não encontrado!", "error")
+            return redirect(url_for('formulario_venda'))
+
+        # Validar se o carro existe e não foi vendido
+        cursor.execute("SELECT * FROM estoque WHERE idcarro = %s", (idcarro,))
+        carro = cursor.fetchone()
+        if not carro:
+            flash("Carro não encontrado!", "error")
+            return redirect(url_for('vendas'))
+
+        # Calcular comissão total e valor líquido
+        comissao_total = comissao_carro + retorno_financiamento - taxa_financiamento
+        valor_liquido = comissao_total - transferencia - corretor - dizimo
+
+        # Inserir venda no banco de dados
+        comando = """
+        INSERT INTO vendas 
+        (idvendedor, idcarro, idCliente, Nome_cliente, Data_venda, Comissao_carro, Retorno_finaciamento, 
+         Taxa_financiamento, Comissao_total, Transferencia, Corretor, Dizimo, Valor_liquido) 
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+        """
+        valores = (idvendedor, idcarro, idcliente, nome_cliente, data_venda, comissao_carro, retorno_financiamento,
+                   taxa_financiamento, comissao_total, transferencia, corretor, dizimo, valor_liquido)
+
+        cursor.execute(comando, valores)
+        status = "Vendido"
+        # Atualizar status do carro para vendido
+        cursor.execute(
+            "UPDATE estoque SET `status` = %s WHERE idcarro = %s",
+            (status, idcarro,))
+
+        # Commit e fechar conexão
+        conexao.commit()
+        cursor.close()
+        conexao.close()
+
+        flash("Venda registrada com sucesso!", "success")
+        return redirect(url_for('vendas'))
+
+    return render_template('vendas.html')
+
+
+@app.route('/estoque', methods=['GET', 'POST'])
+def estoque():
+    conexao = conexao_bd()
+    cursor = conexao.cursor()
+
+    carros = None
+
+    if request.method == 'GET' and 'ver_todos' in request.args:
+        comando = 'SELECT * FROM estoque'
+
+        cursor.execute(comando)
+
+        carros = cursor.fetchall()
+
+        cursor.close()
+        conexao.close()
+        return render_template('estoque.html', carros=carros)
+
+    if request.method == 'POST':
+        proprietario = request.form['proprietario'].title()
+        marca_modelo_ano = request.form['marca_modelo_ano']
+        fipe = float(request.form['fipe'])
+        placa = request.form['placa']
+        data_entrada = request.form['data_entrada']
+        status = request.form['status']
+
+        cursor.execute(
+            """INSERT INTO estoque(proprietario, `Marca/modelo/ano`, fipe, placa, data_entrada, status)
+            VALUES(%s, %s, %s, %s, %s, %s)""", (proprietario, marca_modelo_ano, fipe, placa, data_entrada, status))
+
+        conexao.commit()
+        print('CARRO CADASTRADO COM SUCEESO')
+        conexao.close()
+        cursor.close()
+
+        flash('Carro adicionado no estoque!', 'sucess')
+        return render_template('estoque.html', carros=carros)
+
+    return render_template('estoque.html', carros=None)
+
+
+@app.route('/caixa_diario', methods=['GET'])
+def caixa_diario():
+    conexao = conexao_bd()
+    cursor = conexao.cursor()
+
+    # Obtendo a data de hoje
+    data_hoje = datetime.now().strftime('%Y-%m-%d')
+
+    # Consulta para buscar entradas (pagamentos ou orçamentos com valor pago)
+    cursor.execute("""
+        SELECT SUM(valor_liquido) 
+        FROM vendas
+        WHERE DATE(data_venda) = %s;
+    """, (data_hoje,))
+    total_entradas = cursor.fetchone()[0] or 0  # Caso não haja entradas, soma como 0
+
+    # Consulta para buscar despesas do dia
+    cursor.execute("""
+        SELECT SUM(valor_despesa) 
+        FROM despesas 
+        WHERE DATE(data_despesa) = %s;
+    """, (data_hoje,))
+    total_despesas = cursor.fetchone()[0] or 0  # Caso não haja despesas, soma como 0
+
+    # Calculando o saldo do caixa
+    saldo_caixa = total_entradas - total_despesas
+
+    # Fechando a conexão com o banco
+    conexao.close()
+    cursor.close()
+
+    # Exibindo na interface
+    return render_template(
+        'caixa_diario.html',
+        data_hoje=data_hoje,
+        total_entradas=total_entradas,
+        total_despesas=total_despesas,
+        saldo_caixa=saldo_caixa
+    )
 
 
 '''@app.route('calcular_orçamento', methods=['GET', 'POST'])

@@ -11,18 +11,20 @@
             line-height: 1.6;
             margin: 0;
             padding: 0;
-            background-color: #f9f9f9;
+            background: linear-gradient(to bottom, #000000, #333333);
             color: #333;
+            min-height: 100vh;
         }
 
         /* Container principal */
         .container {
-            width: 70%;
+            margin-top; 15px;
+            width: 79%;
             position: relative;
             left: 10%;
-            margin: 0 auto;
+            margin: auto;
             padding: 20px;
-            background: #fff;
+            background: #C0C0C0;
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
@@ -36,7 +38,7 @@
         header h1 {
             font-size: 2em;
             color: #333;
-            border-bottom: 2px solid #007BFF;
+            border-bottom: 2px solid #32CD32;
             display: inline-block;
             padding-bottom: 5px;
         }
@@ -57,45 +59,6 @@
             z-index: 10; /* Adicionando o z-index */
         }
 
-        .menu label {
-            display: block;
-        }
-
-        .menu button {
-            background-color: #0056b3;
-            color: white;
-            border: none;
-            padding: 10px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            border-radius: 5px;
-            text-align: left;
-            width: 100%;
-            transition: background-color 0.3s ease;
-        }
-
-        .menu button:hover {
-            background-color: #003f88;
-        }
-
-        .submenu {
-            display: none;
-            flex-direction: column;
-            margin-top: 5px;
-            margin-left: 15px;
-        }
-
-        .submenu a {
-            text-decoration: none;
-            color: white;
-            font-size: 14px;
-            margin: 5px 0;
-        }
-
-        .submenu a:hover {
-            color: #dcdcdc;
-        }
 
         input[type="checkbox"] {
             display: none;
@@ -129,7 +92,7 @@
 
         form button {
             padding: 10px 15px;
-            background-color: #007BFF;
+            background-color: #32CD32;
             color: white;
             border: none;
             border-radius: 4px;
@@ -138,7 +101,7 @@
         }
 
         form button:hover {
-            background-color: #0056b3;
+            background-color: #008000;
         }
 
         /* Mensagens flash */
@@ -183,36 +146,52 @@
         }
 
         /* Tabela */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 20px;
-            background-color: white;
-            border: 1px solid #ddd;
-        }
+table {
+    width: 90%; /* Reduz um pouco a largura */
+    max-width: 1000px; /* Define um limite máximo */
+    border-collapse: collapse;
+    margin-left: 100px;
+    margin: 20px auto; /* Centraliza */
+    background-color: white;
+    border: 1px solid #ddd;
+    font-size: 12px; /* Diminui a fonte */
+}
 
-        table thead {
-            background-color: #007BFF;
-            color: white;
-        }
+/* Cabeçalho da tabela */
+table thead {
+    background-color: #007BFF;
+    color: white;
+}
 
-        table th, table td {
-            padding: 12px 15px;
-            border: 1px solid #ddd;
-            text-align: left;
-        }
+table th, table td {
+    padding: 6px 10px; /* Reduz o espaçamento interno */
+    border: 1px solid #ddd;
+    text-align: left;
+    white-space: nowrap; /* Evita que os textos quebrem */
+}
 
-        table tr:nth-child(even) {
-            background-color: #f2f2f2;
-        }
+/* Linhas alternadas */
+table tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
 
-        table tr:hover {
-            background-color: #f1f1f1;
-        }
+table tr:hover {
+    background-color: #f1f1f1;
+}
 
-        table th {
-            font-weight: bold;
-        }
+/* Ajusta o cabeçalho */
+table th {
+    font-weight: bold;
+    background-color: #32CD32;
+    text-align: center;
+}
+
+/* Responsividade: Rolagem horizontal */
+.table-container {
+    width: 100%;
+    overflow-x: auto;
+}
+
 
         /* Responsividade */
         @media (max-width: 768px) {
@@ -243,8 +222,8 @@
             font-size: 20px;
             font-weight: bold;
             text-align: center;
-            background-color: #cce5ff; /* Fundo azul claro */
-            color: #004085; /* Cor do texto azul escuro */
+            background-color: #32CD32; /* Fundo azul claro */
+            color: #000000; /* Cor do texto azul escuro */
             border: 1px solid #b8daff; /* Borda azul claro */
         }
     </style>
@@ -254,9 +233,8 @@
 
     <div class="container">
         <header>
-            <h1>Relatório de Orçamentos</h1>
+            <h1>Relatório de Vendas</h1>
         </header>
-
         <!-- Exibição de mensagens flash -->
         <div>
             {% with messages = get_flashed_messages(with_categories=true) %}
@@ -270,7 +248,9 @@
             {% endwith %}
         </div>
 
-        <form method="POST" action="/relatorio_orcamentos">
+        <!-- Exibição de mensagens flash -->
+
+        <form method="POST" action="/relatorio_vendas">
             <label for="data_entrada">Data de Início:</label>
             <input type="date" id="data_entrada" name="data_entrada" required>
 
@@ -278,7 +258,7 @@
             <input type="date" id="data_saida" name="data_saida" required>
             <button type="submit">Gerar Relatório</button>
         </form>
-        <form method="POST" action="/relatorio_orcamentos">
+        <form method="POST" action="/relatorio_vendas">
     <input type="hidden" name="data_entrada" value="{{ request.form['data_entrada'] }}">
     <input type="hidden" name="data_saida" value="{{ request.form['data_saida'] }}">
     <button type="submit" name="gerar_excel" value="1">Exportar para Excel</button>
@@ -286,23 +266,28 @@
 
 
         {% if resultados %}
-            <h2>Resultados</h2>
-            {% if message %}
+            <h2>Resultados:</h2>
+           {% if message %}
                 <div class="message-relatorio">
-                    {{ message }}
+                    {{ message|safe }}
                 </div>
             {% endif %}
-
             <table>
                 <thead>
                     <tr>
-                        <th>ID</th>
+                        <th>ID Vendedor</th>
+                        <th>ID Carro</th>
+                        <th>ID Cliente</th>
                         <th>Nome</th>
-                        <th>Contato</th>
-                        <th>Veículo</th>
-                        <th>Data Entrada</th>
-                        <th>Data Saída</th>
-                        <th>Valor Orçamento</th>
+                        <th>Data Venda</th>
+                        <th>Comissão Carro</th>
+                        <th>Retorno Financiamento</th>
+                        <th>Taxa Financiamento</th>
+                        <th>Comissão Total</th>
+                        <th>Trasferência</th>
+                        <th>Corretor</th>
+                        <th>Dízimo</th>
+                        <th>Valor Liquído</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -315,6 +300,14 @@
                             <td>{{ resultado[4] }}</td>
                             <td>{{ resultado[5] }}</td>
                             <td>R${{ resultado[6] }}</td>
+                            <td>R${{ resultado[7] }}</td>
+                            <td>R${{ resultado[8] }}</td>
+                            <td>R${{ resultado[9] }}</td>
+                            <td>R${{ resultado[10] }}</td>
+                            <td>R${{ resultado[11] }}</td>
+                            <td>R${{ resultado[12] }}</td>
+
+
                         </tr>
                     {% endfor %}
                 </tbody>

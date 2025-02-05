@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Caixa Diário</title>
+    <style>
+        /* Reset de estilos */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Corpo da página */
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(to bottom, #000000, #333333);
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            text-align: center;
+        }
+
+        /* Container principal */
+        .container {
+            background-color: #C0C0C0;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 800px;
+            padding: 40px;
+            margin: 50px;
+            margin-left: 250px;
+            box-sizing: border-box;
+        }
+
+        /* Cabeçalho */
+        h1 {
+            font-size: 2.5rem;
+            color: #0000FF;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* Estilos para os totais */
+        h3 {
+            font-size: 1.5rem;
+            margin: 15px 0;
+            font-weight: 500;
+        }
+
+        /* Estilo para valores */
+        h3 span {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        /* Entradas */
+        h3.entradas span {
+            color: #28a745;
+        }
+
+        /* Despesas */
+        h3.despesas span {
+            color: #dc3545;
+        }
+
+        /* Caixa */
+        h3.caixa span {
+            color: #17a2b8;
+        }
+
+        /* Link de retorno */
+        a {
+            text-decoration: none;
+            color: #007bff;
+            font-size: 1rem;
+            margin-top: 30px;
+            display: inline-block;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* Exemplo de responsividade */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            h3 {
+                font-size: 1.25rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+{% include 'menu.html' %}
+    <div class="container">
+        <!-- Cabeçalho -->
+        <h1>Caixa Diário </h1>
+        <h2>{{ data_hoje }}</h2>
+
+        <!-- Entradas -->
+        <h3 class="entradas">Entradas (Recebimentos): <span>R$ {{ total_entradas | round(2) }}</span></h3>
+
+        <!-- Despesas -->
+        <h3 class="despesas">Despesas (Custos): <span>R$ {{ total_despesas | round(2) }}</span></h3>
+
+        <!-- Saldo do Caixa -->
+        <h3 class="caixa">Saldo do Caixa: <span>R$ {{ saldo_caixa | round(2) }}</span></h3>
+
+    </div>
+</body>
+</html>

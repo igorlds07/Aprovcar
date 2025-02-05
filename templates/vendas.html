@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastrar Venda</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to bottom, #000000, #333333);
+            margin-bottom: 80px;
+            min-height: 100vh;
+        }
+
+        h1 {
+            text-align: center;
+            color: #000000;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #32CD32;
+        }
+
+        .container {
+            margin-left: 310px;
+            padding: 20px;
+            max-width: 900px;
+            width: 100%;
+            margin-top: 50px;
+            background: #C0C0C0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            color: #000000;
+            margin-bottom: 8px;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            color: #000000;
+            background-color: #DCDCDC;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: #000000;
+            outline: none;
+        }
+
+        .form-group input[type="submit"] {
+            background-color: #32CD32;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+            padding: 15px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .form-group input[type="submit"]:hover {
+            background-color: #008000;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin-left: 0;
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    {% include 'menu.html' %}
+
+    <div class="container">
+        <h1>Cadastrar Venda</h1>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="messages">
+                    {% for category, message in messages %}
+                        <div class="flash-message alert-{{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <form action="/vendas" method="POST">
+            <div class="form-group">
+                <label for="idvendedor">ID do Vendedor:</label>
+                <input type="number" id="idvendedor" name="idvendedor" placeholder="Digite o ID do vendedor ">
+            </div>
+
+            <div class="form-group">
+                <label for="idcarro">ID do Carro:</label>
+                <input type="number" id="idcarro" name="idcarro" placeholder="Digite o ID do carro ">
+            </div>
+
+            <div class="form-group">
+                <label for="idCliente">ID do Cliente:</label>
+                <input type="number" id="idCliente" name="idCliente" placeholder="Digite o ID do cliente">
+            </div>
+
+            <div class="form-group">
+                <label for="Nome_cliente">Nome do Cliente:</label>
+                <input type="text" id="Nome_cliente" name="Nome_cliente" placeholder="Nome do Comprador">
+            </div>
+
+            <div class="form-group">
+                <label for="data_venda">Data da Venda:</label>
+                <input type="date" id="data_venda" name="data_venda" placeholder="Nome do Comprador">
+            </div>
+
+            <div class="form-group">
+                <label for="Comissao_carro">Comissão do Carro:</label>
+                <input type="number" step="0.01" id="Comissao_carro" name="Comissao_carro" placeholder="R$ ">
+            </div>
+
+            <div class="form-group">
+                <label for="Retorno_financiamento">Retorno do Financiamento:</label>
+                <input type="number" step="0.01" id="Retorno_financiamento" name="Retorno_financiamento" placeholder="R$">
+            </div>
+
+            <div class="form-group">
+                <label for="Taxa_financiamento">Taxa do Financiamento:</label>
+                <input type="number" step="0.01" id="Taxa_financiamento" name="Taxa_financiamento" placeholder="R$ ">
+            </div>
+
+            <div class="form-group">
+                <label for="Transferencia">Transferência:</label>
+                <input type="number" step="0.01" id="Transferencia" name="Transferencia" placeholder="R$">
+            </div>
+
+            <div class="form-group">
+                <label for="Corretor">Corretor:</label>
+                <input type="number" step="0.01" id="Corretor" name="Corretor"  placeholder="R$">
+            </div>
+
+            <div class="form-group">
+                <label for="Dizimo">Dízimo:</label>
+                <input type="number" step="0.01" id="Dizimo" name="Dizimo"placeholder="R$">
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="Registrar Venda">
+            </div>
+        </form>
+    </div>
+</body>
+</html>
