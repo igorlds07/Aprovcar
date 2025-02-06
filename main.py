@@ -10,6 +10,8 @@ from BD import conexao_bd
 
 from io import BytesIO
 
+from babel.numbers import format_currency
+
 # Nome da aplicação
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
@@ -430,13 +432,30 @@ def relatorio_vendas():
 
         # Consulta SQL para buscar orçamentos no período
         query = """
-            SELECT idvendas, idvendedor, idcarro, Nome_cliente, Data_venda, Comissao_carro, Retorno_finaciamento, taxa_financiamento,
-             Comissao_total, Transferencia, Corretor, Dizimo, Valor_liquido
-            FROM vendas
-            WHERE data_venda BETWEEN %s AND %s
-        """
+                    SELECT 
+                v.idvendas, 
+                vend.nome AS Nome_Vendedor, 
+                est.Marca_modelo_ano AS Modelo_Carro,
+                v.idCliente,
+                v.Nome_cliente, 
+                v.Data_venda, 
+                v.Comissao_carro, 
+                v.Retorno_finaciamento, 
+                v.taxa_financiamento, 
+                v.Comissao_total, 
+                v.Transferencia, 
+                v.Comissao_vendedor,
+                v.Corretor, 
+                v.Dizimo, 
+                v.Valor_liquido
+            FROM vendas v
+            JOIN vendedor vend ON v.idvendedor = vend.idvendedor
+            JOIN estoque est ON v.idcarro = est.idcarro
+            WHERE v.Data_venda BETWEEN %s AND %s
+                """
         cursor.execute(query, (data_inicio.strftime('%Y-%m-%d'), data_fim.strftime('%Y-%m-%d')))
         resultados = cursor.fetchall()
+        print(resultados)
 
         if not resultados:
             flash('Não foi encontrado nenhuma venda dentro do período!', 'error')
@@ -446,8 +465,9 @@ def relatorio_vendas():
         if gerar_excel:
             # Cria um DataFrame com os resultados
             colunas = [
-                "Id vendas", "Id vendedor", "Id carro", "Nome Cliente", "Data Venda" "Comissão Carro", "Retorno finaciamento",
-                "Taxa Financiamento", "Comissão Total", "Transfêrencia", "Corretor", "Dízimo", "Valor Liquído"]
+                "Id vendas", "Id vendedor", "Id carro", "Nome Cliente", "Data Venda",
+                "Comissão Carro", "Retorno finaciamento", "Taxa Financiamento",
+                "Comissão Total", "Transfêrencia", "Comissão Vendedor", "Corretor", "Dízimo", "Valor Liquído"]
             df = pd.DataFrame(resultados, columns=colunas)
 
             # Salva o DataFrame em um arquivo Excel na memória
@@ -472,7 +492,7 @@ def relatorio_vendas():
         total = len(resultados)
 
         message = (f'Foram realizados {total} Venda(s) !<br>'
-                   f'Total Liquído: R${total_entradas:.2f}')
+                   f'Total Liquído: R${format_currency(total_entradas, "BRL", locale="pt_BR")}')
 
         conexao.close()
         cursor.close()
@@ -493,6 +513,7 @@ def relatorio_despesas():
     if request.method == 'POST':
         data_inicio = request.form.get('data_inicio')
         data_fim = request.form.get('data_fim')
+        gerar_excel = request.form.get('gerar_excel')
 
         if data_inicio and data_fim:
             data_inicio = datetime.strptime(data_inicio, '%Y-%m-%d')
@@ -503,9 +524,9 @@ def relatorio_despesas():
                 return render_template('relatorio_despesas.html')
 
         query = """
-                    SELECT iddespesas, descrição, data, valor
+                    SELECT iddespesas, descrição, valor_despesa, data_despesa
                     FROM despesas
-                    WHERE data BETWEEN %s AND %s
+                    WHERE data_despesa BETWEEN %s AND %s
                 """
         cursor.execute(query, (data_inicio.strftime('%Y-%m-%d'), data_fim.strftime('%Y-%m-%d')))
 
@@ -515,9 +536,30 @@ def relatorio_despesas():
             flash('Não foi encontrada nenhuma despesa no período!', 'error')
             return render_template('relatorio_despesas.html')
 
+        if gerar_excel:
+            # Cria um DataFrame com os resultados
+            colunas = [
+                "Id despesa", "Descrição", "Valor despesa", "Data despesa"
+                ]
+            df = pd.DataFrame(resultado, columns=colunas)
+
+            # Salva o DataFrame em um arquivo Excel na memória
+            output = BytesIO()
+            df.to_excel(output, index=False, sheet_name='Relatório de Despesas')
+            output.seek(0)
+
+            # Configura a resposta para download
+            response = make_response(output.getvalue())
+            response.headers["Content-Disposition"] = "attachment; filename=relatorio_despesas.xlsx"
+            response.headers["Content-Type"] = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            flash('Relatório gerado com sucesso!', 'success')
+            return response
+
         print(resultado)
 
-        total_despesas = sum(despesa[3] for despesa in resultado)  # Despesa[3] é o valor
+        total = sum(despesa[2] for despesa in resultado)# Despesa[2] é o valor
+
+        total_despesas = total
 
         return render_template('relatorio_despesas.html', despesas=resultado, total_despesas=total_despesas)
 
@@ -543,8 +585,10 @@ def despesas():
         data = request.form['data']
         valor = request.form['valor']
 
-        cursor.execute('INSERT INTO despesas(descrição, valor, data_despesa)'
-                       'VALUES(%s, %s,%s);', (descricao, valor, data))
+        valor_numerico = float(valor.replace(",", "."))
+
+        cursor.execute('INSERT INTO despesas(descrição, valor_despesa, data_despesa)'
+                       'VALUES(%s, %s,%s);', (descricao, valor_numerico, data))
 
         conexao.commit()
         conexao.close()
@@ -555,6 +599,45 @@ def despesas():
         return render_template('despesas.html')
 
     return render_template('despesas.html')
+
+
+@app.route('/excluir_despesa', methods=['GET', 'POST'])
+def excluir_despesa():
+    conexao = conexao_bd()
+    cursor = conexao.cursor()
+
+    buscar = []
+
+    if request.method == 'POST':
+        # Caso o botão de buscar seja pressionado
+        despesa = request.form.get('descrição')
+        confirmar = request.form.get('confirmar')
+
+        print(f"Despesa: {despesa}, Confirmar: {confirmar}")
+
+        if despesa:
+            cursor.execute('SELECT * FROM despesas WHERE descrição = %s;', (despesa,))
+            buscar = cursor.fetchall()
+            print(buscar)
+
+            if buscar:
+                print(f"Despesa: {despesa}, Confirmar: {confirmar}")
+                # Caso o botão de confirmação de exclusão seja pressionado
+                if request.form.get('confirmar') == 'sim':
+                    print(confirmar)
+                    descricao = buscar[0][1]  # Descrição da despesa
+                    print('botão pressionado')
+                    comando = 'DELETE FROM despesas WHERE descrição = %s;'
+                    cursor.execute(comando, )
+                    conexao.commit()
+                    buscar = []
+                    flash(f'Despesa "{descricao}" excluída com sucesso', 'success')
+                    buscar = []  # Limpa a busca após exclusão
+
+            else:
+                flash('Despesa não encontrada!', 'error')
+
+    return render_template('excluir_despesa.html', buscar=buscar)
 
 
 @app.route('/vendas', methods=['GET', 'POST'])
@@ -573,6 +656,7 @@ def vendas():
         retorno_financiamento = float(request.form['Retorno_financiamento'])
         taxa_financiamento = float(request.form['Taxa_financiamento'])
         transferencia = float(request.form['Transferencia'])
+        comissao_vendedor = float(request.form['comissao_vendedor'])
         corretor = float(request.form['Corretor'])
         dizimo = float(request.form['Dizimo'])
 
@@ -592,17 +676,17 @@ def vendas():
 
         # Calcular comissão total e valor líquido
         comissao_total = comissao_carro + retorno_financiamento - taxa_financiamento
-        valor_liquido = comissao_total - transferencia - corretor - dizimo
+        valor_liquido = comissao_total - transferencia - corretor - comissao_vendedor - dizimo
 
         # Inserir venda no banco de dados
         comando = """
         INSERT INTO vendas 
         (idvendedor, idcarro, idCliente, Nome_cliente, Data_venda, Comissao_carro, Retorno_finaciamento, 
-         Taxa_financiamento, Comissao_total, Transferencia, Corretor, Dizimo, Valor_liquido) 
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+         Taxa_financiamento, Comissao_total, Transferencia, Comissao_vendedor, Corretor, Dizimo, Valor_liquido) 
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         """
         valores = (idvendedor, idcarro, idcliente, nome_cliente, data_venda, comissao_carro, retorno_financiamento,
-                   taxa_financiamento, comissao_total, transferencia, corretor, dizimo, valor_liquido)
+                   taxa_financiamento, comissao_total, transferencia, comissao_vendedor, corretor, dizimo, valor_liquido)
 
         cursor.execute(comando, valores)
         status = "Vendido"
@@ -663,6 +747,11 @@ def estoque():
     return render_template('estoque.html', carros=None)
 
 
+@app.template_filter('real')
+def formatar_real(valor):
+    return format_currency(valor, 'BRL', locale='pt_BR')
+
+
 @app.route('/caixa_diario', methods=['GET'])
 def caixa_diario():
     conexao = conexao_bd()
@@ -676,7 +765,7 @@ def caixa_diario():
         SELECT SUM(valor_liquido) 
         FROM vendas
         WHERE DATE(data_venda) = %s;
-    """, (data_hoje,))
+    """, (data_hoje, ))
     total_entradas = cursor.fetchone()[0] or 0  # Caso não haja entradas, soma como 0
 
     # Consulta para buscar despesas do dia
@@ -684,7 +773,7 @@ def caixa_diario():
         SELECT SUM(valor_despesa) 
         FROM despesas 
         WHERE DATE(data_despesa) = %s;
-    """, (data_hoje,))
+    """, (data_hoje, ))
     total_despesas = cursor.fetchone()[0] or 0  # Caso não haja despesas, soma como 0
 
     # Calculando o saldo do caixa

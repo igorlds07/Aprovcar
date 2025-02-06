@@ -16,7 +16,7 @@
         body {
             font-family: 'Arial', sans-serif;
             background: linear-gradient(to bottom, #000000, #333333);
-            color: #333;
+            color: #000;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -106,15 +106,15 @@
         <!-- Cabeçalho -->
         <h1>Caixa Diário </h1>
         <h2>{{ data_hoje }}</h2>
-
         <!-- Entradas -->
-        <h3 class="entradas">Entradas (Recebimentos): <span>R$ {{ total_entradas | round(2) }}</span></h3>
+        <h3 class="entradas">Entradas (Recebimentos): <span>{{ total_entradas | real }}</span></h3>
 
         <!-- Despesas -->
-        <h3 class="despesas">Despesas (Custos): <span>R$ {{ total_despesas | round(2) }}</span></h3>
+        <h3 class="despesas">Despesas (Custos): <span>{{ total_despesas | real }}</span></h3>
 
         <!-- Saldo do Caixa -->
-        <h3 class="caixa">Saldo do Caixa: <span>R$ {{ saldo_caixa | round(2) }}</span></h3>
+        <h3 class="caixa">Saldo do Caixa: <span>{{ saldo_caixa | real }}</span></h3>
+
 
     </div>
 </body>

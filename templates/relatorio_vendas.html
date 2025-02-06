@@ -272,11 +272,13 @@ table th {
                     {{ message|safe }}
                 </div>
             {% endif %}
+            <div class="table-container">
             <table>
                 <thead>
                     <tr>
-                        <th>ID Vendedor</th>
-                        <th>ID Carro</th>
+                        <th>ID Venda</th>
+                        <th>Vendedor</th>
+                        <th>Carro</th>
                         <th>ID Cliente</th>
                         <th>Nome</th>
                         <th>Data Venda</th>
@@ -285,6 +287,7 @@ table th {
                         <th>Taxa Financiamento</th>
                         <th>Comissão Total</th>
                         <th>Trasferência</th>
+                        <th>Comissão Vendedor</th>
                         <th>Corretor</th>
                         <th>Dízimo</th>
                         <th>Valor Liquído</th>
@@ -298,7 +301,7 @@ table th {
                             <td>{{ resultado[2] }}</td>
                             <td>{{ resultado[3] }}</td>
                             <td>{{ resultado[4] }}</td>
-                            <td>{{ resultado[5] }}</td>
+                            <td>R${{ resultado[5] }}</td>
                             <td>R${{ resultado[6] }}</td>
                             <td>R${{ resultado[7] }}</td>
                             <td>R${{ resultado[8] }}</td>
@@ -306,6 +309,8 @@ table th {
                             <td>R${{ resultado[10] }}</td>
                             <td>R${{ resultado[11] }}</td>
                             <td>R${{ resultado[12] }}</td>
+                            <td>R${{ resultado[13] }}</td>
+                            <td>R${{ resultado[14] }}</td>
 
 
                         </tr>
@@ -314,5 +319,6 @@ table th {
             </table>
         {% endif %}
     </div>
+
 </body>
 </html>

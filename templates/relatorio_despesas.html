@@ -11,8 +11,9 @@
             line-height: 1.6;
             margin: 0;
             padding: 0;
-            background-color: #f9f9f9;
+            background: linear-gradient(to bottom, #000000, #333333);
             color: #333;
+            min-height: 100vh;
         }
 
         .container {
@@ -21,7 +22,7 @@
             left: 10%;
             margin: 0 auto;
             padding: 20px;
-            background: #fff;
+            background: #C0C0C0;
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
@@ -34,8 +35,8 @@
 
         header h1 {
             font-size: 2em;
-            color: #333;
-            border-bottom: 2px solid #007BFF;
+            color: #000;
+            border-bottom: 2px solid #32CD32;
             display: inline-block;
             padding-bottom: 5px;
         }
@@ -98,7 +99,7 @@
 
         form button {
             padding: 10px 15px;
-            background-color: #007BFF;
+            background-color: #32CD32;
             color: white;
             border: none;
             border-radius: 4px;
@@ -107,7 +108,7 @@
         }
 
         form button:hover {
-            background-color: #0056b3;
+            background-color: #008000;
         }
 
         /* Tabela */
@@ -120,7 +121,7 @@
         }
 
         table thead {
-            background-color: #007BFF;
+            background-color: #32CD32;
             color: white;
         }
 
@@ -171,8 +172,8 @@
             font-size: 20px;
             font-weight: bold;
             text-align: center;
-            background-color: #cce5ff; /* Fundo azul claro */
-            color: #004085; /* Cor do texto azul escuro */
+            background-color: #32CD32; /* Fundo verde claro */
+            color: #000; /* Cor do texto azul escuro */
             border: 1px solid #b8daff; /* Borda azul claro */
         }
          .flash-messages {
@@ -234,12 +235,19 @@
 
             <button type="submit">Gerar Relatório</button>
         </form>
+        <form method="POST" action="/relatorio_despesas">
+    <input type="hidden" name="data_entrada" value="{{ request.form['data_entrada'] }}">
+    <input type="hidden" name="data_saida" value="{{ request.form['data_saida'] }}">
+    <button type="submit" name="gerar_excel" value="1">Exportar para Excel</button>
+</form>
 
         {% if despesas %}
             <h2>Resultados</h2>
             {% if total_despesas %}
                 <div class="message-relatorio">
-                    <strong>Total de Despesas:</strong> R$ {{ total_despesas | round(2) }}
+                    <!-- Despesas -->
+            <h3 class="despesas">Total Despesas: <span>{{ total_despesas | real }}</span></h3>
+
                 </div>
             {% endif %}
 
@@ -248,8 +256,8 @@
                     <tr>
                         <th>ID</th>
                         <th>Descrição</th>
-                        <th>Data</th>
                         <th>Valor</th>
+                        <th>Data</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -257,8 +265,8 @@
                         <tr>
                             <td>{{ despesa[0] }}</td>  <!-- ID -->
                             <td>{{ despesa[1] }}</td>  <!-- Descrição -->
-                            <td>{{ despesa[2] }}</td>  <!-- Valor -->
-                            <td>R$ {{ despesa[3] }}</td>  <!-- Data de Entrada -->
+                            <td>R${{ despesa[2] }}</td>  <!-- Valor -->
+                            <td>{{ despesa[3] }}</td>  <!-- Data de Entrada -->
                         </tr>
                     {% endfor %}
                 </tbody>
