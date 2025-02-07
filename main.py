@@ -281,51 +281,6 @@ def funcionarios():
     return render_template('funcionarios.html')
 
 
-@app.route('/funcionarios_atualizar', methods=['GET', 'POST'])
-def funcionarios_atualizar():
-    conexao = conexao_bd()
-    cursor = conexao.cursor()
-    funcionario = None
-
-    if request.method == 'POST':
-
-        nome_funcionario = request.form.get('nome')
-
-        cursor.execute('SELECT * FROM funcionários WHERE nome = %s;', (nome_funcionario,))
-        funcionario_escolhido = cursor.fetchall()
-
-        if funcionario_escolhido:
-            funcionario_escolhido = funcionario_escolhido[0]
-
-            # Obter os valores do formulário
-            total_pecas = request.form.get('total_peças', 0)  # Valor padrão de 0 caso não seja enviado
-            valor_comissao = request.form.get('valor_comissão', 0)  # Valor padrão de 0 caso não seja enviado
-
-            # Recuperar os valores do banco de dados e substituir None por 0
-            total_pecas_db = funcionario_escolhido[0][5] if funcionario_escolhido[0][5] is not None else 0
-            valor_comissao_db = funcionario_escolhido[0][6] if funcionario_escolhido[0][6] is not None else 0
-
-            # Somar os valores antigos com os novos
-            novo_total_pecas = total_pecas_db + int(total_pecas)  # Soma de total_peças
-            novo_valor_comissao = valor_comissao_db + float(valor_comissao)  # Soma de valor_comissão
-
-            # Atualiza o banco de dados com os valores acumulados
-            comando = """UPDATE funcionários 
-                                               SET total_peças = %s, valor_comissão = %s 
-                                               WHERE nome = %s;"""
-            cursor.execute(comando, (novo_total_pecas, novo_valor_comissao, funcionario_escolhido[0][0]))
-            conexao.commit()
-            conexao.close()
-            flash('Valores adicionados com sucesso!', 'sucess')
-
-            return render_template('funcionarios_atualizar.html', funcionario=funcionario_escolhido)
-
-        else:
-            flash('Funcionário não encontrado!', 'error')
-
-    return render_template('funcionarios_atualizar.html', funcionario=funcionario)
-
-
 @app.route('/excluir_funcionario', methods=['GET', 'POST'])
 def excluir_funcionario():
     conexao = conexao_bd()
@@ -410,6 +365,55 @@ def editar_funcionario():
     return render_template('editar_funcionario.html', vendedor=vendedor)
 
 
+@app.route('/vendedor_atualizar', methods=['GET', 'POST'])
+def vendedor_atualizar():
+    """Função para atualizar a comissão do funcionário existente, com o modelo acumulativo mensalmente
+    e é zerado após inicio de cada mês"""
+
+    # Conexão com o banco de dados
+    conexao = conexao_bd()
+    cursor = conexao.cursor()
+
+    # Condição para resgatar o funcionário escolhido pelo administrador
+    if request.method == 'POST':
+        # Obter o ID ou nome do funcionário selecionado
+        vendedor_id = request.form.get('vendedor_id')
+        id_carro = request.form.get('id_carro')
+        data_comissao = request.form.get('data_comissao')
+        valor_comissao = request.form.get('valor_comissao')
+
+        # Condição que só é executada se algum funcionário selecionado
+        if vendedor_id:
+
+            # Comando em SQL para buscar o funcionário escolhido
+            cursor.execute('SELECT * FROM vendedor  WHERE idvendedor = %s;', (vendedor_id,))
+            funcionario_escolhido = cursor.fetchone()
+
+            if funcionario_escolhido:
+                cursor.execute(
+                    'INSERT INTO comissão(idvendedor, idcarro, data_comissao, valor_comissao)'
+                    'VALUES(%s, %s, %s, %s)', (vendedor_id, id_carro, data_comissao, valor_comissao))
+
+                conexao.commit()
+                flash('Comissão adicionada com sucesso !', 'success')
+                conexao.close()
+                cursor.close()
+                return render_template('vendedor_atualizar.html')
+
+            else:
+                flash('Vendedor não encontrado!', 'error')
+
+    # Carregar todos os funcionários para exibir na lista
+    cursor.execute('SELECT * FROM vendedor')
+
+    vendedores = cursor.fetchall()
+    conexao.close()  # Fecha a conexão com o cursor
+    conexao.close()
+
+    # Retorna ao template o resultado de todo o procedimento
+    return render_template('vendedor_atualizar.html', vendedores=vendedores)
+
+
 @app.route('/relatorio_vendas', methods=['GET', 'POST'])
 def relatorio_vendas():
     conexao = conexao_bd()
@@ -465,7 +469,7 @@ def relatorio_vendas():
         if gerar_excel:
             # Cria um DataFrame com os resultados
             colunas = [
-                "Id vendas", "Id vendedor", "Id carro", "Nome Cliente", "Data Venda",
+                "Id vendas", "Id vendedor", "Id carro", "Id cliente", "Nome Cliente", "Data Venda",
                 "Comissão Carro", "Retorno finaciamento", "Taxa Financiamento",
                 "Comissão Total", "Transfêrencia", "Comissão Vendedor", "Corretor", "Dízimo", "Valor Liquído"]
             df = pd.DataFrame(resultados, columns=colunas)
@@ -540,7 +544,7 @@ def relatorio_despesas():
             # Cria um DataFrame com os resultados
             colunas = [
                 "Id despesa", "Descrição", "Valor despesa", "Data despesa"
-                ]
+            ]
             df = pd.DataFrame(resultado, columns=colunas)
 
             # Salva o DataFrame em um arquivo Excel na memória
@@ -557,7 +561,7 @@ def relatorio_despesas():
 
         print(resultado)
 
-        total = sum(despesa[2] for despesa in resultado)# Despesa[2] é o valor
+        total = sum(despesa[2] for despesa in resultado)  # Despesa[2] é o valor
 
         total_despesas = total
 
@@ -566,13 +570,73 @@ def relatorio_despesas():
     return render_template('relatorio_despesas.html', despesa=despesa, total_despesas=total_despesas)
 
 
-@app.route('/relatorio_geral', methods=['GET', 'POST'])
+@app.route('/relatorio_vendedor', methods=['GET', 'POST'])
+def relatorio_vendedor():
+    conexao = conexao_bd()
+    cursor = conexao.cursor()
+
+    resultado = None
+
+    if request.method == 'POST':
+        data_inicio = request.form['data_inicio']
+        data_fim = request.form['data_fim']
+        gerar_excel = request.form.get('gerar_excel')
+
+        if data_fim and data_inicio:
+            data_inicio = datetime.strptime(data_inicio, '%Y-%m-%d')
+            data_fim = datetime.strptime(data_fim, '%Y-%m-%d')
+
+            if data_fim < data_inicio:
+                flash('A data fim não pode ser maior que a data inicío!', 'error')
+                return render_template('relatorio_vendedor.html')
+
+        query = """SELECT c.idcomissão, v.nome AS vendedor_nome, ca.`Marca_modelo_ano` AS carro_modelo, 
+                          c.data_comissao, c.valor_comissao
+                   FROM comissão c
+                   JOIN vendedor v ON c.idvendedor = v.idvendedor
+                   JOIN estoque ca ON c.idcarro = ca.idcarro
+                   WHERE c.data_comissao BETWEEN %s AND %s"""
+
+        cursor.execute(query, (data_inicio.strftime('%Y-%m-%d'), data_fim.strftime('%Y-%m-%d')))
+        resultado = cursor.fetchall()
+
+        if not resultado:
+            flash('Nenhum resultado encontrado no período!', 'error')
+            return render_template('relatorio_vendedor.html')
+
+        if gerar_excel:
+            # Cria um DataFrame com os resultados
+            colunas = [
+                "Id comissão", "Vendedor", "Marca/modelo/ano", "Data comissão", "Valor Comissão"
+            ]
+            df = pd.DataFrame(resultado, columns=colunas)
+
+            # Salva o DataFrame em um arquivo Excel na memória
+            output = BytesIO()
+            df.to_excel(output, index=False, sheet_name='Relatório de Comissão')
+            output.seek(0)
+
+            # Configura a resposta para download
+            response = make_response(output.getvalue())
+            response.headers["Content-Disposition"] = "attachment; filename=relatorio_comissão.xlsx"
+            response.headers["Content-Type"] = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            flash('Relatório gerado com sucesso!', 'success')
+            return response
+
+        print(resultado)
+
+        return render_template('relatorio_vendedor.html', resultado=resultado)
+
+    return render_template('relatorio_vendedor.html', resultado=resultado)
+
+
+'''@app.route('/relatorio_geral', methods=['GET', 'POST'])
 def relatorio_geral():
     conexao = conexao_bd()
     cursor = conexao.cursor()
 
     if request.method == 'POST':
-        data_inicio = request.form.get('')
+        data_inicio = request.form.get('')'''
 
 
 @app.route('/despesas', methods=['GET', 'POST'])
@@ -686,7 +750,8 @@ def vendas():
         VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         """
         valores = (idvendedor, idcarro, idcliente, nome_cliente, data_venda, comissao_carro, retorno_financiamento,
-                   taxa_financiamento, comissao_total, transferencia, comissao_vendedor, corretor, dizimo, valor_liquido)
+                   taxa_financiamento, comissao_total, transferencia, comissao_vendedor, corretor, dizimo,
+                   valor_liquido)
 
         cursor.execute(comando, valores)
         status = "Vendido"
@@ -765,7 +830,7 @@ def caixa_diario():
         SELECT SUM(valor_liquido) 
         FROM vendas
         WHERE DATE(data_venda) = %s;
-    """, (data_hoje, ))
+    """, (data_hoje,))
     total_entradas = cursor.fetchone()[0] or 0  # Caso não haja entradas, soma como 0
 
     # Consulta para buscar despesas do dia
@@ -773,7 +838,7 @@ def caixa_diario():
         SELECT SUM(valor_despesa) 
         FROM despesas 
         WHERE DATE(data_despesa) = %s;
-    """, (data_hoje, ))
+    """, (data_hoje,))
     total_despesas = cursor.fetchone()[0] or 0  # Caso não haja despesas, soma como 0
 
     # Calculando o saldo do caixa
