@@ -236,8 +236,8 @@
             <button type="submit">Gerar Relatório</button>
         </form>
                 <form method="POST" action="/relatorio_vendedor">
-            <input type="hidden" name="data_entrada" value="{{ request.form['data_entrada'] }}">
-            <input type="hidden" name="data_saida" value="{{ request.form['data_saida'] }}">
+            <input type="hidden" name="data_inicio" value="{{ request.form['data_inicio'] }}">
+            <input type="hidden" name="data_fim" value="{{ request.form['data_fim'] }}">
             <button type="submit" name="gerar_excel" value="1">Exportar para Excel</button>
         </form>
 

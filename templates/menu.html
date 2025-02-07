@@ -4,8 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Menu com Submenus ao Clicar</title>
+    <!-- Link para a biblioteca Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
-         /* Estilo para a logo */
+        /* Estilo para a logo */
         .logo {
             width: 195px; /* Tamanho da logo */
             margin-bottom: 5px; /* Espaçamento abaixo da logo */
@@ -26,8 +28,8 @@
             gap: 20px;
         }
         .sair {
-    margin-top: 30px; /* Empurra o botão para o final do menu */
-}
+            margin-top: 30px; /* Empurra o botão para o final do menu */
+        }
 
         /* Estilo para os itens principais do menu */
         .menu-item {
@@ -100,18 +102,17 @@
 
     <div class="menu">
         <!-- Logo acima do formulário -->
-    <img class="logo" src="{{ url_for('static', filename='img/aprovcar.png') }}" alt="Logo da Aprovcar">
+        <img class="logo" src="{{ url_for('static', filename='img/aprovcar.png') }}" alt="Logo da Aprovcar">
         <!-- Menu principal -->
         <div class="menu-item">
-            <button tabindex="0">Caixa Diário</button>
+            <button tabindex="0"><i class="fas fa-wallet"></i> Caixa Diário</button>
             <div class="submenu">
                 <a href="/caixa_diario">Visualizar</a>
-
             </div>
         </div>
 
         <div class="menu-item">
-            <button tabindex="0">Clientes</button>
+            <button tabindex="0"><i class="fas fa-users"></i> Clientes</button>
             <div class="submenu">
                 <a href="/cadastro">Cadastrar Cliente</a>
                 <a href="/editar">Editar Cliente</a>
@@ -120,14 +121,15 @@
             </div>
         </div>
 
-         <div class="menu-item">
-            <button tabindex="0">Vendas</button>
+        <div class="menu-item">
+            <button tabindex="0"><i class="fas fa-hand-holding-usd"></i> Vendas</button>
             <div class="submenu">
                 <a href="/vendas">Cadastrar Vendas</a>
             </div>
         </div>
-         <div class="menu-item">
-            <button tabindex="0">Estoque</button>
+
+        <div class="menu-item">
+            <button tabindex="0"><i class="fas fa-car"></i> Estoque</button>
             <div class="submenu">
                 <a href="/estoque">Adicionar e Visualizar</a>
                 <a href="/editar_funcionario">Editar Veículo</a>
@@ -136,32 +138,35 @@
         </div>
 
         <div class="menu-item">
-            <button tabindex="0">Vendedores</button>
+            <button tabindex="0"><i class="fas fa-users-cog"></i> Vendedores</button>
             <div class="submenu">
                 <a href="/funcionarios">Cadastrar e Visualizar</a>
                 <a href="/editar_funcionario">Editar Vendedor</a>
                 <a href="/excluir_funcionario">Excluir Vendedor</a>
-                 <a href="/vendedor_atualizar">Atualizar Comissão</a>
+                <a href="/vendedor_atualizar">Atualizar Comissão</a>
             </div>
         </div>
-         <!-- Novo botão: Relatórios -->
+
+        <!-- Novo botão: Relatórios -->
         <div class="menu-item">
-            <button tabindex="0">Relatórios</button>
+            <button tabindex="0"><i class="fas fa-chart-line"></i> Relatórios</button>
             <div class="submenu">
                 <a href="/relatorio_vendas">Relatório de Vendas</a>
                 <a href="/relatorio_despesas">Relatório de Despesas</a>
                 <a href="/relatorio_vendedor">Relatório de Vendedores</a>
             </div>
         </div>
+
         <div class="menu-item">
-            <button tabindex="0">Despesas</button>
+            <button tabindex="0"><i class="fas fa-file-invoice-dollar"></i> Despesas</button>
             <div class="submenu">
                 <a href="/despesas">Inserir despesas</a>
                 <a href="/excluir_despesa">Excluir despesas</a>
             </div>
         </div>
+
         <div class="menu-item sair">
-            <button tabindex="0">Sair</button>
+            <button tabindex="0"><i class="fas fa-sign-out-alt"></i> Sair</button>
             <div class="submenu">
                 <a href="/">Confirmar</a>
             </div>

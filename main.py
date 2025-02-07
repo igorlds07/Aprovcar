@@ -1,5 +1,7 @@
 import os
 
+import locale
+
 from datetime import datetime
 
 import pandas as pd
@@ -15,6 +17,9 @@ from babel.numbers import format_currency
 # Nome da aplicação
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
+
+# Configura a localidade para português do Brasil
+locale.setlocale(locale.LC_TIME, 'pt_BR.UTF-8')
 
 
 # fazer uma função de login e senha para adms do programa(dono da oficina)
@@ -472,7 +477,9 @@ def relatorio_vendas():
                 "Id vendas", "Id vendedor", "Id carro", "Id cliente", "Nome Cliente", "Data Venda",
                 "Comissão Carro", "Retorno finaciamento", "Taxa Financiamento",
                 "Comissão Total", "Transfêrencia", "Comissão Vendedor", "Corretor", "Dízimo", "Valor Liquído"]
+
             df = pd.DataFrame(resultados, columns=colunas)
+            print(df)
 
             # Salva o DataFrame em um arquivo Excel na memória
             output = BytesIO()
@@ -495,8 +502,14 @@ def relatorio_vendas():
 
         total = len(resultados)
 
-        message = (f'Foram realizados {total} Venda(s) !<br>'
-                   f'Total Liquído: R${format_currency(total_entradas, "BRL", locale="pt_BR")}')
+        data_inicio_formatada = data_inicio.strftime('%d/%m/%Y')
+        data_fim_formatada = data_fim.strftime('%d/%m/%Y')
+
+        message = (
+            f'Data inicío: {data_inicio_formatada} <br>' 
+            f'Data fim: {data_fim_formatada} <br>'
+            f'Foram realizados {total} Venda(s) !<br>'
+            f'Total Liquído: R${format_currency(total_entradas, "BRL", locale="pt_BR")}')
 
         conexao.close()
         cursor.close()
@@ -517,11 +530,12 @@ def relatorio_despesas():
     if request.method == 'POST':
         data_inicio = request.form.get('data_inicio')
         data_fim = request.form.get('data_fim')
-        gerar_excel = request.form.get('gerar_excel')
+        gerar_excel = 'gerar_excel' in request.form
 
         if data_inicio and data_fim:
             data_inicio = datetime.strptime(data_inicio, '%Y-%m-%d')
             data_fim = datetime.strptime(data_fim, '%Y-%m-%d')
+            print(data_inicio, data_fim)
 
             if data_fim < data_inicio:
                 flash('A data do fim não pode ser menor que a data de inicío!', 'error')
@@ -532,20 +546,24 @@ def relatorio_despesas():
                     FROM despesas
                     WHERE data_despesa BETWEEN %s AND %s
                 """
+        print(data_inicio, data_fim)
         cursor.execute(query, (data_inicio.strftime('%Y-%m-%d'), data_fim.strftime('%Y-%m-%d')))
-
         resultado = cursor.fetchall()
+        print(resultado)
 
         if not resultado:
             flash('Não foi encontrada nenhuma despesa no período!', 'error')
             return render_template('relatorio_despesas.html')
 
         if gerar_excel:
+
             # Cria um DataFrame com os resultados
             colunas = [
                 "Id despesa", "Descrição", "Valor despesa", "Data despesa"
             ]
             df = pd.DataFrame(resultado, columns=colunas)
+
+            print(df)
 
             # Salva o DataFrame em um arquivo Excel na memória
             output = BytesIO()
@@ -558,8 +576,6 @@ def relatorio_despesas():
             response.headers["Content-Type"] = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
             flash('Relatório gerado com sucesso!', 'success')
             return response
-
-        print(resultado)
 
         total = sum(despesa[2] for despesa in resultado)  # Despesa[2] é o valor
 
@@ -580,7 +596,7 @@ def relatorio_vendedor():
     if request.method == 'POST':
         data_inicio = request.form['data_inicio']
         data_fim = request.form['data_fim']
-        gerar_excel = request.form.get('gerar_excel')
+        gerar_excel = 'gerar_excel' in request.form
 
         if data_fim and data_inicio:
             data_inicio = datetime.strptime(data_inicio, '%Y-%m-%d')
@@ -630,13 +646,26 @@ def relatorio_vendedor():
     return render_template('relatorio_vendedor.html', resultado=resultado)
 
 
-'''@app.route('/relatorio_geral', methods=['GET', 'POST'])
+@app.route('/relatorio_geral', methods=['GET', 'POST'])
 def relatorio_geral():
     conexao = conexao_bd()
     cursor = conexao.cursor()
 
     if request.method == 'POST':
-        data_inicio = request.form.get('')'''
+        data_inicio = request.form['data_inicio']
+        data_fim = request.form['data_fim']
+        gera_excel = request.form['gera_excel']
+
+        if data_inicio and data_fim:
+            data_inicio = datetime.strptime(data_inicio, '%d-m%-Y%')
+            data_fim = datetime.strptime(data_fim, '%d-m%-Y%')
+
+            if data_fim < data_inicio:
+                flash('A data final não pode ser menor que a data de inicío', 'error')
+                return render_template('relatorio_geral.html')
+
+        query = """
+        """
 
 
 @app.route('/despesas', methods=['GET', 'POST'])
@@ -817,12 +846,21 @@ def formatar_real(valor):
     return format_currency(valor, 'BRL', locale='pt_BR')
 
 
+# Filtro personalizado para formatar a data
+@app.template_filter('to_date')
+def to_date(value, format='%d de %B de %Y'):
+    if isinstance(value, str):  # Verifica se é uma string
+        value = datetime.strptime(value, '%Y-%m-%d')  # Converte a string para datetime
+    return value.strftime(format)  # Formata a data para o formato desejado
+
+
 @app.route('/caixa_diario', methods=['GET'])
 def caixa_diario():
     conexao = conexao_bd()
     cursor = conexao.cursor()
 
     # Obtendo a data de hoje
+    data = datetime.now().strftime('%Y-%m-%d')
     data_hoje = datetime.now().strftime('%Y-%m-%d')
 
     # Consulta para buscar entradas (pagamentos ou orçamentos com valor pago)
@@ -851,6 +889,7 @@ def caixa_diario():
     # Exibindo na interface
     return render_template(
         'caixa_diario.html',
+        data=data,
         data_hoje=data_hoje,
         total_entradas=total_entradas,
         total_despesas=total_despesas,
