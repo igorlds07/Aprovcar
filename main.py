@@ -14,6 +14,7 @@ from io import BytesIO
 
 from babel.numbers import format_currency
 
+
 # Nome da aplicação
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
@@ -509,7 +510,7 @@ def relatorio_vendas():
             f'Data inicío: {data_inicio_formatada} <br>' 
             f'Data fim: {data_fim_formatada} <br>'
             f'Foram realizados {total} Venda(s) !<br>'
-            f'Total Liquído: R${format_currency(total_entradas, "BRL", locale="pt_BR")}')
+            f'Total Liquído: {format_currency(total_entradas, "BRL", locale="pt_BR")}')
 
         conexao.close()
         cursor.close()
@@ -698,37 +699,33 @@ def despesas():
 def excluir_despesa():
     conexao = conexao_bd()
     cursor = conexao.cursor()
-
     buscar = []
 
     if request.method == 'POST':
-        # Caso o botão de buscar seja pressionado
-        despesa = request.form.get('descrição')
+        despesa = request.form.get('descrição')  # Nome da despesa para busca
+        descricao_confirmada = request.form.get('descricao')  # Nome da despesa ao excluir
         confirmar = request.form.get('confirmar')
 
-        print(f"Despesa: {despesa}, Confirmar: {confirmar}")
+        print(f"Despesa: {despesa}, Confirmar: {confirmar}, Descrição Confirmada: {descricao_confirmada}")
 
+        # Se o usuário buscou uma despesa
         if despesa:
             cursor.execute('SELECT * FROM despesas WHERE descrição = %s;', (despesa,))
             buscar = cursor.fetchall()
-            print(buscar)
+            if not buscar:
+                flash('Despesa não encontrada.', 'error')
+                return render_template('excluir_despesa.html')
 
-            if buscar:
-                print(f"Despesa: {despesa}, Confirmar: {confirmar}")
-                # Caso o botão de confirmação de exclusão seja pressionado
-                if request.form.get('confirmar') == 'sim':
-                    print(confirmar)
-                    descricao = buscar[0][1]  # Descrição da despesa
-                    print('botão pressionado')
-                    comando = 'DELETE FROM despesas WHERE descrição = %s;'
-                    cursor.execute(comando, )
-                    conexao.commit()
-                    buscar = []
-                    flash(f'Despesa "{descricao}" excluída com sucesso', 'success')
-                    buscar = []  # Limpa a busca após exclusão
+        # Se o usuário confirmou a exclusão
+        if descricao_confirmada and confirmar == 'sim':
+            print("Excluindo despesa:", descricao_confirmada)
+            comando = 'DELETE FROM despesas WHERE descrição = %s;'
+            cursor.execute(comando, (descricao_confirmada,))
+            conexao.commit()
 
-            else:
-                flash('Despesa não encontrada!', 'error')
+            flash(f'Despesa "{descricao_confirmada}" excluída com sucesso!', 'success')
+            buscar = []  # Limpa a busca após exclusão
+
 
     return render_template('excluir_despesa.html', buscar=buscar)
 
@@ -897,16 +894,44 @@ def caixa_diario():
     )
 
 
-'''@app.route('calcular_orçamento', methods=['GET', 'POST'])
-def calcular_orcamento():
-    resposta = None
-    if request.method == 'POST':
-        valor_orcamento = request.form['valor_orcamento']
-        valor_despesas = request.form['valor_despesas']
+from flask import render_template, request
 
-        if valor_orcamento and valor_despesas:
-            caluculo = (valor_orcamento + valor_despesas)
-            resposta = caluculo + valor_despesas + (caluculo * 10/100 )'''
+
+@app.route('/calcular_repasse', methods=['GET', 'POST'])
+def calcular_repasse():
+    resposta = None
+
+    if request.method == 'POST':
+        print(request.form)
+        carro = request.form.get('carro')
+        despesas = request.form.get('despesas')
+        porcentagem = request.form.get('porcentagem')
+
+        if not carro or not despesas or not porcentagem:
+            flash('Preencha todos os campos necessários', 'error')
+            return render_template('calcular_repasse.html')
+
+        valor_carro = float(carro)
+        valor_despesas = float(despesas)
+        lucro_porcentagem = float(porcentagem)
+
+        caluculo = valor_carro + valor_despesas
+        repasse = caluculo * (lucro_porcentagem / 100) + caluculo
+
+        print(repasse)
+
+        message = (
+            f'Veículo = {format_currency(valor_carro, "BRL", locale="pt_BR")}<br>'
+            f'                               +      <br>'
+            f'Despesas = {format_currency(valor_despesas, "BRL", locale="pt_BR")}<br>'
+            f'                              +        <br>'
+            f'Porcentagem lucro = {lucro_porcentagem}%<br>'
+            f'  <br>       '
+            f'O valor sugerido para venda é de {format_currency(repasse, "BRL", locale="pt_BR")}.')
+        return render_template('calcular_repasse.html', lucro=repasse, message=message)
+
+    return render_template('calcular_repasse.html')
+
 
 # Condição para verificar se o projeto esta sendo executado diretamente
 if __name__ == '__main__':

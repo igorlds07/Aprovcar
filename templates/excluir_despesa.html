@@ -146,19 +146,46 @@
             text-align: center;
             font-size: 14px;
             margin-top: 20px;
+            animation: fadeOut 6s forwards; /* A mensagem desaparecerá após 6 segundos */
         }
 
         .success-message {
             color: green;
+            animation: fadeOut 6s forwards; /* A mensagem desaparecerá após 6 segundos */
         }
 
         .error-message {
             color: red;
+            animation: fadeOut 6s forwards; /* A mensagem desaparecerá após 6 segundos */
         }
 
         .warning-message {
             color: orange;
         }
+        /* Animações */
+        @keyframes fadeOut {
+            0% {
+                opacity: 1;
+                visibility: visible;
+                animation: fadeOut 6s forwards; /* A mensagem desaparecerá após 6 segundos */
+            }
+            100% {
+                opacity: 0;
+                visibility: hidden;
+                top: -50px;
+            }
+        }
+
+        /* Responsividade */
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+                visibility: hidden;
+            }
+            100% {
+                opacity: 1;
+                visibility: visible;
+            }
 
         /* Responsividade */
         @media screen and (max-width: 768px) {
