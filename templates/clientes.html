@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Menu com Botões</title>
+    <title>Visualizar Clientes</title>
     <style>
         /* Resetando margens e preenchimentos */
         * {
@@ -14,56 +14,53 @@
 
         /* Corpo da página */
         body {
+            min-height: 100vh;
             font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
-            margin-bottom: 80px; /* Para evitar sobreposição com o menu */
+            background: linear-gradient(to bottom, #000000, #333333);
+            color: #000000;
+            margin-bottom: 80px;
         }
-
-        /* Estilo do menu fixo à esquerda com botões em coluna */
-        .menu {
-            position: fixed;
-            top: 20px; /* Ajuste a posição do menu */
-            left: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 15px; /* Espaçamento entre os botões */
-            z-index: 1000;
+        h1 {
+            text-align: center;
+            color: #red;
+            margin-bottom: 30px;
+            margin-top: 20px;
+            border-bottom: 2px solid #32CD32;
         }
-
-        .menu button {
-            background-color: #007bff;
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            border-radius: 8px;
-            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-            transition: background-color 0.3s ease, transform 0.2s ease;
-        }
-
-        .menu button:hover {
-            background-color: #0056b3;
-            transform: scale(1.05);
+        h2 {
+            text-align: center;
+            color: #red;
+            margin-bottom: 30px;
+            margin-top: 30px;
         }
 
         /* Conteúdo principal */
-        .main-content {
-            margin-left: 100px; /* Garante que o conteúdo não seja sobreposto pelos botões */
+            width: 70%;
+            margin: 50px auto;
+            max-width: 700px; /* Largura máxima do formulário */
+            margin-right: 100px;
+            background-color: #C0C0C0;
             padding: 20px;
+            padding-bottom: 50px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
         }
 
-        h1, h2 {
+        h1 {
             text-align: center;
-            color: #333;
+            color: #red;
+            margin-bottom: 30px;
+            margin-top: 20px;
+            border-bottom: 2px solid #32CD32;
         }
 
         form {
-            max-width: 600px;
-            margin: 30px auto;
-            background-color: #fff;
-            padding: 20px;
+            margin-top: 50px;
+            max-width: 650px;
+            margin-left: 400px;
+            background-color: #C0C0C0;
+            padding: 25px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             border-radius: 8px;
         }
@@ -71,13 +68,14 @@
         form label {
             font-size: 16px;
             margin-bottom: 10px;
-            display: block;
+            font-weight: bold;
         }
 
         form input[type="text"] {
             width: calc(100% - 22px);
             padding: 10px;
             font-size: 16px;
+            background-color: #DCDCDC;
             border: 1px solid #ccc;
             border-radius: 4px;
             margin-bottom: 10px;
@@ -85,7 +83,7 @@
 
         form button {
             padding: 10px 20px;
-            background-color: #007bff;
+            background-color: #32CD32;
             color: white;
             border: none;
             border-radius: 8px;
@@ -94,13 +92,13 @@
         }
 
         form button:hover {
-            background-color: #0056b3;
+            background-color: #008000;
         }
 
         table {
-            width: 80%;
+            width: 70%;
             margin: 30px auto;
-            margin-right: 50px; /* Adiciona espaço à esquerda */
+            margin-left: 315px; /* Adiciona espaço à esquerda */
             border-collapse: collapse;
             background-color: #fff;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -114,11 +112,11 @@
         }
 
         table th {
-            background-color: #f2f2f2;
+            background-color: #32CD32;
         }
 
         table tbody tr:nth-child(even) {
-            background-color: #f9f9f9;
+            background-color: #ddd;
         }
 
         table tbody tr:hover {
@@ -128,7 +126,7 @@
         .error-message {
             color: red;
             text-align: center;
-            font-size: 18px;
+            font-size: 25px;
             margin-top: 20px;
         }
 
@@ -163,42 +161,14 @@
     </style>
 </head>
 <body>
-  <div class="menu">
-    <label>
-        <button>Clientes</button>
-        <input type="checkbox">
-        <div class="submenu">
-            <a href="/cadastro">Cadastrar Cliente</a>
-            <a href="/editar_cliente">Editar Cliente</a>
-            <a href="/excluir_cliente">Excluir Cliente</a>
-            <a href="/clientes">Visualizar Clientes</a>
-        </div>
-
-    </label>
-    <label>
-        <button>Funcionários</button>
-        <input type="checkbox">
-        <div class="submenu">
-            <a href="/cadastro_funcionario">Cadastrar Funcionário</a>
-            <a href="/editar_funcionario">Editar Funcionário</a>
-            <a href="/excluir_funcionario">Excluir Funcionário</a>
-            <a href="/funcionarios">Visualizar Funcionários</a>
-        </div>
-    </label>
-      <label>
-        <div class="submenu">
-            <a href="/relatorio_orcamentos">Relatórios Orçamentos</a>
-        </div>
-        </label>
-</div>
    <!-- Inclui o menu fixo -->
     {% include 'menu.html' %}
     <!-- Conteúdo principal da página -->
-    <div class="main-content">
-        <h1>Buscar Cliente</h1>
+
 
     <!-- Formulário para buscar um cliente específico -->
     <form action="/clientes" method="POST">
+        <h1>Buscar Cliente</h1>
         <label for="nome">Nome do Cliente:</label>
         <input type="text" id="nome" name="nome" placeholder="Digite o nome do cliente">
         <button type="submit">Buscar</button>
@@ -207,9 +177,10 @@
     <!-- Botão para ver todos os clientes -->
     <form action="/clientes" method="GET">
          <button type="submit" name="ver_todos" value="true">Ver Todos os Clientes</button>
+        <h2>Resultado da Busca:</h2>
     </form>
 
-    <h2>Resultado da Busca:</h2>
+
 
     {% if clientes %}
         {% if clientes[0] == 'Cliente não encontrado' %}
@@ -221,10 +192,10 @@
                         <th>id</th>
                         <th>Nome</th>
                         <th>Contato</th>
-                        <th>Veículo</th>
-                        <th>Data Entrada</th>
-                        <th>Data Saída</th>
-                        <th>Valor Orçamento</th>
+                        <th>CPF</th>
+                        <th>Data de Nascimento</th>
+                        <th>Data da Venda</th>
+                        <th>Email</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -236,7 +207,7 @@
                             <td>{{ cliente[3] }}</td> <!-- Exibindo o Veículo -->
                             <td>{{ cliente[4] }}</td> <!-- Exibindo a Data de Entrada -->
                             <td>{{ cliente[5] }}</td> <!-- Exibindo a Data de Saída -->
-                            <td>R$ {{ cliente[6] }}</td> <!-- Exibindo o Valor Orçamento -->
+                            <td>{{ cliente[6] }}</td> <!-- Exibindo o Valor Orçamento -->
                         </tr>
                     {% endfor %}
                 </tbody>

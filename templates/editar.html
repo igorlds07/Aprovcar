@@ -5,12 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Editar Cliente</title>
     <style>
-        /* Estilo para o conteúdo da página */
-        .main-content {
-            margin-left: 80px; /* Garante um espaço para os botões à esquerda */
-            padding: 20px;
-        }
-
         * {
             margin: 0;
             padding: 0;
@@ -18,166 +12,156 @@
         }
 
         body {
+            min-height: 100vh;
             font-family: Arial, sans-serif;
             background: linear-gradient(to bottom, #000000, #333333);
-            margin-bottom: 60px;
-        }
-
-        .menu {
-            position: fixed;
-            top: 10px;
-            left: 10px;
-            padding: 10px;
-            border-radius: 5px;
-            display: flex;
-            flex-direction: column; /* Organiza os botões verticalmente */
-            gap: 10px; /* Espaçamento entre os botões */
-        }
-
-        .menu button {
-            background-color: linear-gradient(to bottom, #000000, #333333);
-            color: white;
-            border: none;
-            padding: 12px 15px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            border-radius: 8px;
-            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-            transition: background-color 0.3s ease, transform 0.2s ease;
-        }
-
-        .menu button:hover {
-            background-color: #0056b3;
-            transform: scale(1.05);
+            color: #000;
+            margin-bottom: 80px;
         }
 
         .container {
             width: 70%;
             margin: 50px auto;
-            margin-right: 105px;
-            background-color: #fff;
+            max-width: 900px; /* Largura máxima do formulário */
+            margin-right: 125px;
+            background-color: #C0C0C0;
             padding: 20px;
+            padding-bottom: 50px;
+            border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
         h1 {
             text-align: center;
-            color: #333;
-            
+            color: #000000;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #32CD32;
         }
 
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
 
         .form-group label {
             display: block;
             font-weight: bold;
-            color: #333;
+            color: #000000;
         }
 
         .form-group input {
             width: 100%;
-            padding: 10px;
+            padding: 12px;
             margin-top: 5px;
             border: 1px solid #ddd;
-            border-radius: 4px;
+            border-radius: 6px;
             font-size: 16px;
+            color: #000000;
+            background-color: #DCDCDC;
         }
 
-        .form-group input[type="submit"] {
-            background-color: #4CAF50;
+        .form-group input[type="submit"], .form-group button {
+            background-color: #32CD32;
             color: white;
             border: none;
             cursor: pointer;
-        }
-
-        .form-group input[type="submit"]:hover {
-            background-color: #45a049;
-        }
-
-        .error {
-            color: red;
-            text-align: center;
-            font-size: 14px;
-        }
-
-        .messages {
-            text-align: center;
-            margin: 0 auto 20px auto;
-            max-width: 80%;
-        }
-
-        .alert {
-            padding: 15px;
-            margin-bottom: 10px;
+            padding: 10px 15px;
             border-radius: 5px;
             font-size: 16px;
         }
 
-        .alert-success {
-            background-color: #28a745;
-            color: white;
+        .form-group button {
+            background-color: #32CD32;
+            padding: 10px;
+            margin-top: 13px;
         }
 
-        .alert-error {
-            background-color: #dc3545;
-            color: white;
+        .form-group input[type="submit"]:hover {
+            background-color: #008000;
+        }
+
+        .form-group button:hover {
+            background-color: #008000;
+        }
+
+        .flash-message {
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .flash-message.success {
+            background-color: #008000;
+            color: #fff;
+            border: 1px solid #a5d6a7;
+            animation: fadeOut 6s forwards; /* A mensagem desaparecerá após 6 segundos */
+        }
+
+        .flash-message.error {
+            background-color: #ffebee;
+            color: #c62828;
+            border: 1px solid #ef9a9a;
+            animation: fadeOut 6s forwards; /* A mensagem desaparecerá após 6 segundos */
+        }
+        /* Animações */
+        @keyframes fadeOut {
+            0% {
+                opacity: 1;
+                visibility: visible;
+            }
+            100% {
+                opacity: 0;
+                visibility: hidden;
+                top: -50px;
+            }
+        }
+
+        /* Responsividade */
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+                visibility: hidden;
+            }
+            100% {
+                opacity: 1;
+                visibility: visible;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="menu">
-        <label>
-            <button>Clientes</button>
-            <div class="submenu">
-                <a href="/cadastro">Cadastrar Cliente</a>
-                <a href="/editar">Editar Cliente</a>
-                <a href="/excluir_cliente">Excluir Cliente</a>
-                <a href="/clientes">Visualizar Clientes</a>
-            </div>
-        </label>
-        <label>
-            <button>Funcionários</button>
-            <div class="submenu">
-                <a href="/funcionarios">Cadastrar Funcionário</a>
-                <a href="/editar_funcionario">Editar Funcionário</a>
-                <a href="/excluir_funcionario">Excluir Funcionário</a>
-                <a href="/funcionarios">Visualizar Funcionários</a>
-            </div>
-        </label>
-        <label>
-        <div class="submenu">
-            <a href="/relatorio_orcamentos">Relatórios Orçamentos</a>
-        </div>
-        </label>
-    </div>
-    <!-- Inclui o menu fixo -->
     {% include 'menu.html' %}
-    <!-- Exibir mensagens de sucesso ou erro -->
-    {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-    <div class="messages">
-        {% for category, message in messages %}
-        <div class="alert alert-{{ category }}">
-            {{ message }}
-        </div>
-        {% endfor %}
-    </div>
-    {% endif %}
-    {% endwith %}
 
     <div class="container">
         <h1>Editar Cliente</h1>
-        <form action="/editar" method="POST">
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="flash-message {{ category }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <!-- Formulário para buscar o cliente -->
+        <form action="/editar" method="GET">
             <div class="form-group">
-                <label for="cliente">Nome do Cliente:</label>
-                <input type="text" id="cliente" name="cliente" value="{{ cliente[1] if cliente else '' }}" required>
+                <label for="buscar_cliente">Buscar Cliente:</label>
+                <input type="text" id="buscar_cliente" name="cliente" placeholder="Digite o nome do cliente">
+                <button type="submit">Buscar Cliente</button>
             </div>
+        </form>
+
+        <!-- Formulário de edição do cliente -->
+        {% if cliente %}
+        <form action="/editar" method="POST">
+            <input type="hidden" name="cliente_original" value="{{ cliente[1] if cliente else '' }}">
 
             <div class="form-group">
-                <label for="nome">Nome:</label>
+                <label for="nome">Nome do Cliente:</label>
                 <input type="text" id="nome" name="nome" value="{{ cliente[1] if cliente else '' }}" required>
             </div>
 
@@ -187,29 +171,30 @@
             </div>
 
             <div class="form-group">
-                <label for="veiculo">Veículo:</label>
-                <input type="text" id="veiculo" name="veiculo" value="{{ cliente[3] if cliente else '' }}" required>
+                <label for="cpf">CPF:</label>
+                <input type="text" id="cpf" name="cpf" value="{{ cliente[3] if cliente else '' }}" required>
             </div>
 
             <div class="form-group">
-                <label for="data_entrada">Data de Entrada:</label>
-                <input type="date" id="data_entrada" name="data_entrada" value="{{ cliente[4] if cliente else '' }}" required>
+                <label for="data_nascimento">Data de Nascimento:</label>
+                <input type="date" id="data_nascimento" name="data_nascimento" value="{{ cliente[4] if cliente else '' }}" required>
             </div>
 
             <div class="form-group">
-                <label for="data_saida">Data de Saída:</label>
-                <input type="date" id="data_saida" name="data_saida" value="{{ cliente[5] if cliente else '' }}">
+                <label for="data_venda">Data da Venda:</label>
+                <input type="date" id="data_venda" name="data_venda" value="{{ cliente[5] if cliente else '' }}" required>
             </div>
 
             <div class="form-group">
-                <label for="valor_orcamento">Valor Orçamento:</label>
-                <input type="number" id="valor_orcamento" name="valor_orcamento" value="{{ cliente[6] if cliente else '' }}" required>
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" value="{{ cliente[6] if cliente else '' }}">
             </div>
 
             <div class="form-group">
                 <input type="submit" value="Atualizar Cliente">
             </div>
         </form>
+        {% endif %}
     </div>
 </body>
 </html>

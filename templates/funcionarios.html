@@ -15,27 +15,35 @@
         /* Corpo da página */
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
+            background: linear-gradient(to bottom, #000000, #333333);
             margin-bottom: 80px;
         }
 
         /* Cabeçalho */
         h1 {
             text-align: center;
-            background-color: #ffffff;
-            color: #333;
+            background-color: #C0C0C0;
+            color: #000;
             padding: 20px;
             margin-bottom: 20px;
-            border-bottom: 2px solid #007BFF;
+            border-bottom: 2px solid #32CD32;
+        }
+         h2 {
+            margin-right: 20px;
+            background-color: ##C0C0C0;
+            padding: 20px;
+            margin-bottom: 13px;
+
         }
 
         /* Container principal */
         .container {
             max-width: 895px;
-            margin: 0 auto;
+            margin-top: 20px;
+            margin: auto;
             margin-right: 150px;
             padding: 20px;
-            background-color: white;
+            background-color: #C0C0C0;
             border-radius: 5px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
@@ -45,6 +53,8 @@
             display: flex;
             flex-direction: column;
             margin-bottom: 30px;
+
+
         }
 
         .form-group {
@@ -58,7 +68,7 @@
 
         form button {
             padding: 10px 20px;
-            background-color: #007bff;
+            background-color: #32CD32;
             color: white;
             border: none;
             border-radius: 4px;
@@ -67,7 +77,7 @@
         }
 
         form button:hover {
-            background-color: #0056b3;
+            background-color: #008000;
         }
 
         .form-group input {
@@ -76,6 +86,7 @@
             border-radius: 4px;
             font-size: 16px;
             width: 100%;
+            background-color: #DCDCDC;
         }
 
         /* Menu fixo à esquerda com botões em coluna */
@@ -124,11 +135,11 @@
         table th, table td {
             padding: 12px 15px;
             text-align: left;
-            border: 1px solid #ddd;
+            border: 1px solid #fff;
         }
 
         table th {
-            background-color: #f2f2f2;
+            background-color: #32CD32;
         }
 
         table tbody tr:nth-child(even) {
@@ -143,23 +154,53 @@
             font-size: 22px;
             margin-bottom: 10px;
         }
+flash-message {
+            padding: 40px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            font-weight: bold;
+            text-align: center;
+            animation: fadeOut 6s forwards; /* A mensagem desaparece após 4 segundos */
+        }
 
-        .alert {
+        .flash-message.success {
+            background-color: #008000;
             padding: 10px;
-            margin-bottom: 20px;
-            border-radius: 5px;
-            font-size: 16px;
+            color: #fff;
+            border: 1px solid #a5d6a7;
+            animation: fadeOut 6s forwards; /* A mensagem desaparecerá após 6 segundos */
         }
 
-        .alert-success {
-            background-color: #28a745 !important;
-            color: white !important;
-            border: 1px solid #218838 !important;
+        .flash-message.error {
+            background-color: #ffebee;
+            color: #c62828;
+            border: 1px solid #ef9a9a;
+            animation: fadeOut 6s forwards; /* A mensagem desaparecerá após 6 segundos */
         }
 
-        .alert-danger {
-            background-color: #f8d7da;
-            color: #721c24;
+           /* Animações */
+        @keyframes fadeOut {
+            0% {
+                opacity: 1;
+                visibility: visible;
+            }
+            100% {
+                opacity: 0;
+                visibility: hidden;
+                top: -50px;
+            }
+        }
+
+        /* Responsividade */
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+                visibility: hidden;
+            }
+            100% {
+                opacity: 1;
+                visibility: visible;
+            }
         }
     </style>
 </head>
@@ -167,13 +208,11 @@
 
     {% include 'menu.html' %}
     <div class="container">
-        <h1>Cadastro de Funcionários</h1>
-
-        <!-- Exibe mensagens de flash -->
+        <h1>Vendedores</h1>
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 {% for category, message in messages %}
-                    <div class="alert alert-{{ category }}">
+                    <div class=" flash-message {{ category }}">
                         {{ message }}
                     </div>
                 {% endfor %}
@@ -181,7 +220,9 @@
         {% endwith %}
 
         <!-- Formulário de cadastro -->
-        <h2>Cadastrar Novo Funcionário</h2>
+        <h2>Cadastrar Novo Vendedor</h2>
+         <!-- Exibe mensagens de flash -->
+
         <form method="POST">
 
             <div class="form-group">
@@ -190,33 +231,43 @@
             </div>
 
             <div class="form-group">
-                <label for="contato">Contato:</label>
-                <input type="text" id="contato" name="contato" placeholder="Digite o telefone ou email" required>
+                <label for="cpf">CPF:</label>
+                <input type="text" id="cpf" name="cpf" placeholder="Digite o CPF" required>
             </div>
 
             <div class="form-group">
-                <label for="cargo">Cargo:</label>
-                <input type="text" id="cargo" name="cargo" placeholder="Digite o cargo do funcionário" required>
+                <label for="contato">Contato:</label>
+                <input type="text" id="contato" name="contato" placeholder="Digite o telefone para contato" required>
             </div>
+
+            <div class="form-group">
+                <label for="data_nascimento">Data de Nascimento:</label>
+                <input type="date" id="data_nascimento" name="data_nascimento" placeholder="Digite a data de nascimento " required>
+            </div>
+
+            <div class="form-group">
+                <label for="data_admissao">Data de Admissão:</label>
+                <input type="date" id="data_admissao" name="data_admissao" placeholder="Digite a data de admissão  " required>
+            </div>
+
             <button type="submit">Cadastrar</button>
         </form>
         <form action="/funcionarios" method="GET">
-            <button type="submit" name="ver_todos" value="true">Ver Todos os Funcionários</button>
+            <button type="submit" name="ver_todos" value="true">Ver Todos os Vendedores</button>
         </form>
         <hr>
-
         <!-- Lista de funcionários -->
         <section id="funcionarios-lista">
-            <h2>Funcionários Cadastrados</h2>
+            <h2>Vendedores Cadastrados</h2>
             <table>
                 <thead>
                     <tr>
                         <th>ID</th>
                         <th>Nome</th>
+                        <th>CPF</th>
                         <th>Contato</th>
-                        <th>Cargo</th>
-                        <th>Peças</th>
-                        <th>Valor Comissão</th>
+                        <th>Data de Nascimento</th>
+                        <th>Data de Admissão</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -227,7 +278,7 @@
                             <td>{{ funcionario[2] }}</td>
                             <td>{{ funcionario[3] }}</td>
                             <td>{{ funcionario[4] }}</td>
-                            <td>{{ funcionario[5] }}</td>
+                            <td>{{ funcionario[4] }}</td>
                         </tr>
                     {% endfor %}
                 </tbody>

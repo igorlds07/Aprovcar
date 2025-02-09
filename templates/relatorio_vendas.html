@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatório de Orçamentos</title>
+    <style>
+        /* Estilização geral */
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to bottom, #000000, #333333);
+            color: #333;
+            min-height: 100vh;
+        }
+
+        /* Container principal */
+        .container {
+            margin-top; 15px;
+            width: 79%;
+            position: relative;
+            left: 10%;
+            margin: auto;
+            padding: 20px;
+            background: #C0C0C0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Header */
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        header h1 {
+            font-size: 2em;
+            color: #333;
+            border-bottom: 2px solid #32CD32;
+            display: inline-block;
+            padding-bottom: 5px;
+        }
+
+        /* Menu lateral fixo */
+        .menu {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 250px;
+            background-color: #007bff;
+            padding: 20px 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+            z-index: 10; /* Adicionando o z-index */
+        }
+
+
+        input[type="checkbox"] {
+            display: none;
+        }
+
+        input[type="checkbox"]:checked + .submenu {
+            display: flex;
+        }
+
+        /* Formulário */
+        form {
+            margin-bottom: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        form label {
+            flex: 1 1 100%;
+            font-weight: bold;
+        }
+
+        form input[type="date"] {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: 100%;
+            max-width: 300px;
+            box-sizing: border-box;
+        }
+
+        form button {
+            padding: 10px 15px;
+            background-color: #32CD32;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        form button:hover {
+            background-color: #008000;
+        }
+
+        /* Mensagens flash */
+        .flash-messages {
+            list-style: none;
+            padding: 0;
+            margin: 10px 0;
+        }
+
+        .flash-messages li {
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        .flash-messages .error {
+            background-color: #f8d7da;
+            color: #842029;
+            animation: fadeOut 6s forwards; /* Aplica an animação ao erro */
+        }
+
+        .flash-messages .info {
+            background-color: #cff4fc;
+            color: #055160;
+        }
+
+        .flash-messages .success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        @keyframes fadeOut {
+            0% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+                visibility: hidden;
+                top: -50px;
+            }
+        }
+
+        /* Tabela */
+table {
+    width: 90%; /* Reduz um pouco a largura */
+    max-width: 1000px; /* Define um limite máximo */
+    border-collapse: collapse;
+    margin-left: 100px;
+    margin: 20px auto; /* Centraliza */
+    background-color: white;
+    border: 1px solid #ddd;
+    font-size: 12px; /* Diminui a fonte */
+}
+
+/* Cabeçalho da tabela */
+table thead {
+    background-color: #007BFF;
+    color: white;
+}
+
+table th, table td {
+    padding: 6px 10px; /* Reduz o espaçamento interno */
+    border: 1px solid #ddd;
+    text-align: left;
+    white-space: nowrap; /* Evita que os textos quebrem */
+}
+
+/* Linhas alternadas */
+table tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+table tr:hover {
+    background-color: #f1f1f1;
+}
+
+/* Ajusta o cabeçalho */
+table th {
+    font-weight: bold;
+    background-color: #32CD32;
+    text-align: center;
+}
+
+/* Responsividade: Rolagem horizontal */
+.table-container {
+    width: 100%;
+    overflow-x: auto;
+}
+
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .container {
+                width: 95%;
+                padding: 10px;
+            }
+
+            form {
+                flex-direction: column;
+            }
+
+            form input[type="date"], form button {
+                width: 100%;
+            }
+
+            table {
+                font-size: 14px;
+            }
+        }
+
+        /* Estilo único para a mensagem abaixo dos resultados */
+        .message-relatorio {
+            padding: 15px;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            font-size: 20px;
+            font-weight: bold;
+            text-align: center;
+            background-color: #32CD32; /* Fundo azul claro */
+            color: #000000; /* Cor do texto azul escuro */
+            border: 1px solid #b8daff; /* Borda azul claro */
+        }
+    </style>
+</head>
+<body>
+    {% include 'menu.html' %}
+
+    <div class="container">
+        <header>
+            <h1>Relatório de Vendas</h1>
+        </header>
+        <!-- Exibição de mensagens flash -->
+        <div>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <ul class="flash-messages">
+                        {% for category, message in messages %}
+                            <li class="{{ category }}">{{ message }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            {% endwith %}
+        </div>
+
+        <!-- Exibição de mensagens flash -->
+
+        <form method="POST" action="/relatorio_vendas">
+            <label for="data_entrada">Data de Início:</label>
+            <input type="date" id="data_entrada" name="data_entrada" required>
+
+            <label for="data_saida">Data de Fim:</label>
+            <input type="date" id="data_saida" name="data_saida" required>
+            <button type="submit">Gerar Relatório</button>
+        </form>
+        <form method="POST" action="/relatorio_vendas">
+    <input type="hidden" name="data_entrada" value="{{ request.form['data_entrada'] }}">
+    <input type="hidden" name="data_saida" value="{{ request.form['data_saida'] }}">
+    <button type="submit" name="gerar_excel" value="1">Exportar para Excel</button>
+</form>
+
+
+        {% if resultados %}
+            <h2>Resultados:</h2>
+           {% if message %}
+                <div class="message-relatorio">
+                    {{ message|safe }}
+                </div>
+            {% endif %}
+            <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID Venda</th>
+                        <th>Vendedor</th>
+                        <th>Carro</th>
+                        <th>ID Cliente</th>
+                        <th>Nome</th>
+                        <th>Data Venda</th>
+                        <th>Comissão Carro</th>
+                        <th>Retorno Financiamento</th>
+                        <th>Taxa Financiamento</th>
+                        <th>Comissão Total</th>
+                        <th>Trasferência</th>
+                        <th>Comissão Vendedor</th>
+                        <th>Corretor</th>
+                        <th>Dízimo</th>
+                        <th>Valor Liquído</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for resultado in resultados %}
+                        <tr>
+                            <td>{{ resultado[0] }}</td>
+                            <td>{{ resultado[1] }}</td>
+                            <td>{{ resultado[2] }}</td>
+                            <td>{{ resultado[3] }}</td>
+                            <td>{{ resultado[4] }}</td>
+                            <td>{{ resultado[5] }}</td>
+                            <td>R${{ resultado[6] }}</td>
+                            <td>R${{ resultado[7] }}</td>
+                            <td>R${{ resultado[8] }}</td>
+                            <td>R${{ resultado[9] }}</td>
+                            <td>R${{ resultado[10] }}</td>
+                            <td>R${{ resultado[11] }}</td>
+                            <td>R${{ resultado[12] }}</td>
+                            <td>R${{ resultado[13] }}</td>
+                            <td>R${{ resultado[14] }}</td>
+
+
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+    </div>
+</body>
+</html>

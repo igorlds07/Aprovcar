@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Excluir Funcionário</title>
+    <title>Excluir Despesa</title>
     <style>
          /* Resetando margens e preenchimentos */
         * {
@@ -21,6 +21,35 @@
             min-height: 100vh;
         }
 
+        /* Estilo para o menu fixo à esquerda */
+        .menu {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            z-index: 1000;
+        }
+
+        .menu button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 5px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .menu button:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+
         /* Estilo para o conteúdo principal da página */
         .container {
             width: 100%;
@@ -34,7 +63,7 @@
 
         h1 {
             text-align: center;
-            color: #333;
+            color: #000;
             margin-bottom: 30px;
              border-bottom: 2px solid #32CD32;
         }
@@ -56,7 +85,7 @@
             border: 1px solid #ddd;
             border-radius: 6px;
             font-size: 16px;
-            color: #333;
+            color: #000;
             background-color: #DCDCDC;
             transition: border-color 0.3s;
         }
@@ -67,7 +96,7 @@
         }
 
         button[type="submit"], .confirm-button {
-            background-color: #32CD32; /* Cor vermelha para excluir */
+            background-color: #32CD32;
             color: white;
             padding: 12px 20px;
             font-size: 16px;
@@ -82,34 +111,63 @@
             background-color: #008000;
         }
 
-        .flash-message {
-            padding: 10px;
-            margin-bottom: 15px;
+        /* Estilo das mensagens */
+        .messages {
+            margin-top: 20px;
+        }
+
+        .alert {
+            padding: 15px;
             border-radius: 5px;
-            font-weight: bold;
+            margin-bottom: 15px;
+            font-size: 16px;
             text-align: center;
-            animation: fadeOut 6s forwards; /* A mensagem desaparece após 4 segundos */
         }
 
-        .flash-message.success {
-            background-color: #008000;
-            color: #fff;
-            border: 1px solid #a5d6a7;
+        .alert-success {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+
+        .alert-error {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+
+        .alert-warning {
+            background-color: #fff3cd;
+            border: 1px solid #ffeeba;
+            color: #856404;
+        }
+
+        .success-message, .error-message, .warning-message {
+            text-align: center;
+            font-size: 14px;
+            margin-top: 20px;
             animation: fadeOut 6s forwards; /* A mensagem desaparecerá após 6 segundos */
         }
 
-        .flash-message.error {
-            background-color: #ffebee;
-            color: #c62828;
-            border: 1px solid #ef9a9a;
+        .success-message {
+            color: green;
             animation: fadeOut 6s forwards; /* A mensagem desaparecerá após 6 segundos */
         }
 
-           /* Animações */
+        .error-message {
+            color: red;
+            animation: fadeOut 6s forwards; /* A mensagem desaparecerá após 6 segundos */
+        }
+
+        .warning-message {
+            color: orange;
+        }
+        /* Animações */
         @keyframes fadeOut {
             0% {
                 opacity: 1;
                 visibility: visible;
+                animation: fadeOut 6s forwards; /* A mensagem desaparecerá após 6 segundos */
             }
             100% {
                 opacity: 0;
@@ -128,6 +186,21 @@
                 opacity: 1;
                 visibility: visible;
             }
+
+        /* Responsividade */
+        @media screen and (max-width: 768px) {
+            body {
+                padding-left: 20px;
+                padding-right: 20px;
+            }
+
+            .container {
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
         }
     </style>
 </head>
@@ -136,14 +209,14 @@
 {% include 'menu.html' %}
       <!-- Contêiner de Exclusão -->
     <div class="container">
-        <h1>Excluir Funcionário</h1>
+        <h1>Excluir Despesa</h1>
 
         <!-- Exibir Mensagens de Sucesso ou Erro -->
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 <div class="messages">
                     {% for category, message in messages %}
-                        <div class=" flash-message {{ category }}">
+                        <div class="alert alert-{{ category }}">
                             {{ message }}
                         </div>
                     {% endfor %}
@@ -152,45 +225,41 @@
         {% endwith %}
 
         <!-- Exibe o Formulário de Exclusão (Somente no GET) -->
-        <form method="POST" action="{{ url_for('excluir_funcionario') }}">
+        <form method="POST" action="{{ url_for('excluir_despesa') }}">
             <div class="form-group">
-                <label for="nome">Nome do Vendedor:</label>
-                <input type="text" id="nome" name="nome" value="{{ funcionario[1] if funcionario else '' }}" placeholder="Digite o nome">
+                <label for="descrição">Descrição da Despesa:</label>
+                <input type="text" id="descrição" name="descrição" value="{{ buscar[0][1] if buscar else '' }}" required>
             </div>
 
             <div class="form-group">
-                <button type="submit">Buscar Vendedor</button>
+                <button type="submit">Buscar Despesa</button>
             </div>
         </form>
 
-        <!-- Se um cliente for encontrado, exibe os dados para confirmação -->
-        {% if vendedor %}
-            <form method="POST" action="{{ url_for('excluir_funcionario') }}">
+        <!-- Se uma despesa for encontrada, exibe os dados para confirmação -->
+        {% if buscar %}
+            <form method="POST" action="{{ url_for('excluir_despesa') }}">
                 <div class="form-group">
-                    <label>Nome do Vendedor(a):</label>
-                    <input type="text" value="{{ vendedor[1] }}" readonly>
-                </div>
-
-                <div class="form-group">
-                    <label>CPF:</label>
-                    <input type="text" value="{{ vendedor[2] }}" readonly>
+                    <label>Descrição:</label>
+                    <input type="text" value="{{ buscar[0][1] }}" readonly>
                 </div>
 
                 <div class="form-group">
-                    <label>Contato:</label>
-                    <input type="text" value="{{ vendedor[3] }}" readonly>
+                    <label>Data:</label>
+                    <input type="text" value="{{ buscar[0][2] }}" readonly>
                 </div>
-
-                 <div class="form-group">
-                    <label>Data de Admissão:</label>
-                    <input type="text" value="{{ vendedor[5] }}" readonly>
-                </div>
-
-                <input type="hidden" name="nome" value="{{ vendedor[1] }}">
 
                 <div class="form-group">
-                    <button type="submit" name="confirmar"  value="sim">Confirmar Exclusão</button>
+                    <label>Valor:</label>
+                    <input type="text" value="{{ buscar[0][3] }}" readonly>
                 </div>
+
+                            <!-- Enviando os dados necessários no POST -->
+                <input type="hidden" name="descricao" value="{{ buscar[0][1] }}">
+                <input type="hidden" name="valor_despesa" value="{{ buscar[0][2] }}">
+                <input type="hidden" name="data_despesa" value="{{ buscar[0][3] }}">
+
+                     <button type="submit" name="confirmar" value="sim">Confirmar</button>
             </form>
         {% else %}
 

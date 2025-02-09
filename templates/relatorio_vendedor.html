@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Relatório de Orçamentos</title>
+    <title>Relatório Vendedores</title>
     <style>
         /* Estilização geral */
         body {
@@ -11,18 +11,18 @@
             line-height: 1.6;
             margin: 0;
             padding: 0;
-            background-color: #f9f9f9;
+            background: linear-gradient(to bottom, #000000, #333333);
             color: #333;
+            min-height: 100vh;
         }
 
-        /* Container principal */
         .container {
             width: 70%;
             position: relative;
             left: 10%;
             margin: 0 auto;
             padding: 20px;
-            background: #fff;
+            background: #C0C0C0;
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
@@ -35,8 +35,8 @@
 
         header h1 {
             font-size: 2em;
-            color: #333;
-            border-bottom: 2px solid #007BFF;
+            color: #000;
+            border-bottom: 2px solid #32CD32;
             display: inline-block;
             padding-bottom: 5px;
         }
@@ -54,11 +54,7 @@
             flex-direction: column;
             gap: 10px;
             box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-            z-index: 10; /* Adicionando o z-index */
-        }
-
-        .menu label {
-            display: block;
+            z-index: 10;
         }
 
         .menu button {
@@ -77,32 +73,6 @@
 
         .menu button:hover {
             background-color: #003f88;
-        }
-
-        .submenu {
-            display: none;
-            flex-direction: column;
-            margin-top: 5px;
-            margin-left: 15px;
-        }
-
-        .submenu a {
-            text-decoration: none;
-            color: white;
-            font-size: 14px;
-            margin: 5px 0;
-        }
-
-        .submenu a:hover {
-            color: #dcdcdc;
-        }
-
-        input[type="checkbox"] {
-            display: none;
-        }
-
-        input[type="checkbox"]:checked + .submenu {
-            display: flex;
         }
 
         /* Formulário */
@@ -129,7 +99,7 @@
 
         form button {
             padding: 10px 15px;
-            background-color: #007BFF;
+            background-color: #32CD32;
             color: white;
             border: none;
             border-radius: 4px;
@@ -138,48 +108,7 @@
         }
 
         form button:hover {
-            background-color: #0056b3;
-        }
-
-        /* Mensagens flash */
-        .flash-messages {
-            list-style: none;
-            padding: 0;
-            margin: 10px 0;
-        }
-
-        .flash-messages li {
-            padding: 10px;
-            margin-bottom: 10px;
-            border-radius: 4px;
-            font-weight: bold;
-        }
-
-        .flash-messages .error {
-            background-color: #f8d7da;
-            color: #842029;
-            animation: fadeOut 6s forwards; /* Aplica an animação ao erro */
-        }
-
-        .flash-messages .info {
-            background-color: #cff4fc;
-            color: #055160;
-        }
-
-        .flash-messages .success {
-            background-color: #d4edda;
-            color: #155724;
-        }
-
-        @keyframes fadeOut {
-            0% {
-                opacity: 1;
-            }
-            100% {
-                opacity: 0;
-                visibility: hidden;
-                top: -50px;
-            }
+            background-color: #008000;
         }
 
         /* Tabela */
@@ -192,7 +121,7 @@
         }
 
         table thead {
-            background-color: #007BFF;
+            background-color: #32CD32;
             color: white;
         }
 
@@ -243,18 +172,44 @@
             font-size: 20px;
             font-weight: bold;
             text-align: center;
-            background-color: #cce5ff; /* Fundo azul claro */
-            color: #004085; /* Cor do texto azul escuro */
+            background-color: #32CD32; /* Fundo verde claro */
+            color: #000; /* Cor do texto azul escuro */
             border: 1px solid #b8daff; /* Borda azul claro */
         }
+         .flash-messages {
+            list-style: none;
+            padding: 0;
+        }
+        .flash-messages .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+             animation: fadeOut 6s forwards; /* A mensagem desaparece após 4 segundos */
+        }
+
+
+        @keyframes fadeOut {
+        0% {
+        opacity: 1;
+        }
+        100% {
+        opacity: 0;
+        visibility: hidden;
+        top: -50px;
+        }
+        }
+
     </style>
 </head>
 <body>
-    {% include 'menu.html' %}
 
+    {% include 'menu.html' %}
     <div class="container">
         <header>
-            <h1>Relatório de Orçamentos</h1>
+            <h1>Relatório Vendedores</h1>
         </header>
 
         <!-- Exibição de mensagens flash -->
@@ -270,55 +225,46 @@
             {% endwith %}
         </div>
 
-        <form method="POST" action="/relatorio_orcamentos">
-            <label for="data_entrada">Data de Início:</label>
-            <input type="date" id="data_entrada" name="data_entrada" required>
+        <!-- Formulário de Filtro -->
+        <form method="POST" action="/relatorio_vendedor">
+            <label for="data_inicio">Data de Início:</label>
+            <input type="date" id="data_inicio" name="data_inicio" required>
 
-            <label for="data_saida">Data de Fim:</label>
-            <input type="date" id="data_saida" name="data_saida" required>
+            <label for="data_fim">Data de Fim:</label>
+            <input type="date" id="data_fim" name="data_fim" required>
+
             <button type="submit">Gerar Relatório</button>
         </form>
-        <form method="POST" action="/relatorio_orcamentos">
-    <input type="hidden" name="data_entrada" value="{{ request.form['data_entrada'] }}">
-    <input type="hidden" name="data_saida" value="{{ request.form['data_saida'] }}">
-    <button type="submit" name="gerar_excel" value="1">Exportar para Excel</button>
-</form>
+                <form method="POST" action="/relatorio_vendedor">
+            <input type="hidden" name="data_inicio" value="{{ request.form['data_inicio'] }}">
+            <input type="hidden" name="data_fim" value="{{ request.form['data_fim'] }}">
+            <button type="submit" name="gerar_excel" value="1">Exportar para Excel</button>
+        </form>
 
-
-        {% if resultados %}
-            <h2>Resultados</h2>
-            {% if message %}
-                <div class="message-relatorio">
-                    {{ message }}
-                </div>
-            {% endif %}
+        {% if resultado %}
 
             <table>
                 <thead>
                     <tr>
-                        <th>ID</th>
-                        <th>Nome</th>
-                        <th>Contato</th>
-                        <th>Veículo</th>
-                        <th>Data Entrada</th>
-                        <th>Data Saída</th>
-                        <th>Valor Orçamento</th>
+                        <th>Vendedor</th>
+                        <th>Carro</th>
+                        <th>Data</th>
+                        <th>Comissão</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for resultado in resultados %}
+                    {% for result in resultado %}
                         <tr>
-                            <td>{{ resultado[0] }}</td>
-                            <td>{{ resultado[1] }}</td>
-                            <td>{{ resultado[2] }}</td>
-                            <td>{{ resultado[3] }}</td>
-                            <td>{{ resultado[4] }}</td>
-                            <td>{{ resultado[5] }}</td>
-                            <td>R${{ resultado[6] }}</td>
+                             <!-- ID -->
+                            <td>{{ result[1] }}</td>  <!-- Descrição -->
+                            <td>{{ result[2] }}</td>  <!-- Valor -->
+                            <td>{{ result[3] }}</td>
+                            <td>R${{ result[4] }}</td>
                         </tr>
                     {% endfor %}
                 </tbody>
             </table>
+
         {% endif %}
     </div>
 </body>
