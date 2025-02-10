@@ -14,7 +14,6 @@ from io import BytesIO
 
 from babel.numbers import format_currency
 
-
 # Nome da aplicação
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
@@ -255,8 +254,6 @@ def funcionarios():
     conexao = conexao_bd()
     cursor = conexao.cursor()
 
-    funcionario = []
-
     if request.method == 'GET' and 'ver_todos' in request.args:
         comando = 'SELECT * FROM vendedor;'
         cursor.execute(comando, )
@@ -330,7 +327,6 @@ def editar_funcionario():
     conexao = conexao_bd()
     cursor = conexao.cursor()
     vendedor = None
-    error = None
 
     if request.method == 'GET' and 'vendedor' in request.args:
         nome_vendedor = request.args.get('vendedor')
@@ -507,7 +503,7 @@ def relatorio_vendas():
         data_fim_formatada = data_fim.strftime('%d/%m/%Y')
 
         message = (
-            f'Data inicío: {data_inicio_formatada} <br>' 
+            f'Data inicío: {data_inicio_formatada} <br>'
             f'Data fim: {data_fim_formatada} <br>'
             f'Foram realizados {total} Venda(s) !<br>'
             f'Total Liquído: {format_currency(total_entradas, "BRL", locale="pt_BR")}')
@@ -557,7 +553,6 @@ def relatorio_despesas():
             return render_template('relatorio_despesas.html')
 
         if gerar_excel:
-
             # Cria um DataFrame com os resultados
             colunas = [
                 "Id despesa", "Descrição", "Valor despesa", "Data despesa"
@@ -726,7 +721,6 @@ def excluir_despesa():
             flash(f'Despesa "{descricao_confirmada}" excluída com sucesso!', 'success')
             buscar = []  # Limpa a busca após exclusão
 
-
     return render_template('excluir_despesa.html', buscar=buscar)
 
 
@@ -824,7 +818,7 @@ def estoque():
         status = request.form['status']
 
         cursor.execute(
-            """INSERT INTO estoque(proprietario, `Marca/modelo/ano`, fipe, placa, data_entrada, status)
+            """INSERT INTO estoque(proprietario, `Marca_modelo_ano`, fipe, placa, data_entrada, status)
             VALUES(%s, %s, %s, %s, %s, %s)""", (proprietario, marca_modelo_ano, fipe, placa, data_entrada, status))
 
         conexao.commit()
@@ -836,6 +830,40 @@ def estoque():
         return render_template('estoque.html', carros=carros)
 
     return render_template('estoque.html', carros=None)
+
+
+@app.route('/excluir_veiculo', methods=['GET', 'POST'])
+def excluir_veiculo():
+    conexao = conexao_bd()
+    cursor = conexao.cursor()
+    carro = []
+
+    if request.method == 'POST':
+        id_carro = request.form.get('id_veiculo')
+        confirmar = request.form.get('confirmar')
+
+        print(f"id_carro: {id_carro}, Confirmar: {confirmar}")
+
+        if id_carro:
+            id_veiculo = int(id_carro)
+            cursor.execute('SELECT * FROM estoque WHERE idcarro = %s;', (id_veiculo, ))
+            carro = cursor.fetchall()
+            print(carro)
+            if not carro:
+                flash('Veículo não encontrado!', 'error')
+                print('não encontrado')
+                return render_template('excluir_veiculo.html')
+
+        if confirmar == 'sim':
+            id_veiculo = int(id_carro)
+            print('Confirmado')
+            cursor.execute('DELETE FROM estoque WHERE idcarro = %s;', (id_veiculo, ))
+            conexao.commit()
+            flash('Veículo excluido com sucesso', 'sucess')
+            carro = []
+
+    return render_template('excluir_veiculo.html', carro=carro)
+
 
 
 @app.template_filter('real')
@@ -892,9 +920,6 @@ def caixa_diario():
         total_despesas=total_despesas,
         saldo_caixa=saldo_caixa
     )
-
-
-from flask import render_template, request
 
 
 @app.route('/calcular_repasse', methods=['GET', 'POST'])

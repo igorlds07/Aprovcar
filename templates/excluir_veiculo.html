@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Excluir Despesa</title>
+    <title>Excluir Veículo</title>
     <style>
          /* Resetando margens e preenchimentos */
         * {
@@ -110,93 +110,58 @@
         button[type="submit"]:hover, .confirm-button:hover {
             background-color: #008000;
         }
+.flash-message.success {
+    background-color: #4CAF50; /* Verde para sucesso */
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #388E3C;
+    margin-bottom: 20px;
+}
 
-        /* Estilo das mensagens */
-        .messages {
-            margin-top: 20px;
-        }
+.flash-message.error {
+    background-color: #F44336; /* Vermelho para erro */
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #D32F2F;
+    margin-bottom: 20px;
+    animation: fadeOut 6s forwards; /* A mensagem desaparecerá após 6 segundos */
 
-        .alert {
-            padding: 15px;
-            border-radius: 5px;
-            margin-bottom: 15px;
-            font-size: 16px;
-            text-align: center;
-        }
+}
 
-        .alert-success {
-            background-color: #d4edda;
-            border: 1px solid #c3e6cb;
-            color: #155724;
-        }
+.flash-message.warning {
+    background-color: #FF9800; /* Laranja para warning */
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #F57C00;
+    margin-bottom: 20px;
+    animation: fadeIn 1s ease-in-out;
+}
 
-        .alert-error {
-            background-color: #f8d7da;
-            border: 1px solid #f5c6cb;
-            color: #721c24;
-        }
+.flash-message.info {
+    background-color: #2196F3; /* Azul para info */
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #1976D2;
+    margin-bottom: 20px;
+}
 
-        .alert-warning {
-            background-color: #fff3cd;
-            border: 1px solid #ffeeba;
-            color: #856404;
-        }
-
-        .success-message, .error-message, .warning-message {
-            text-align: center;
-            font-size: 14px;
-            margin-top: 20px;
-            animation: fadeOut 6s forwards; /* A mensagem desaparecerá após 6 segundos */
-        }
-
-        .success-message {
-            color: green;
-            animation: fadeOut 6s forwards; /* A mensagem desaparecerá após 6 segundos */
-        }
-
-        .error-message {
-            color: red;
-            animation: fadeOut 6s forwards; /* A mensagem desaparecerá após 6 segundos */
-        }
-
-        .warning-message {
-            color: orange;
-        }
-        /* Animações */
-        @keyframes fadeOut {
-            0% {
-                opacity: 1;
-                visibility: visible;
-                animation: fadeOut 6s forwards; /* A mensagem desaparecerá após 6 segundos */
-            }
-            100% {
-                opacity: 0;
-                visibility: hidden;
-                top: -50px;
-            }
-        }
-
-        /* Responsividade */
-        @keyframes fadeIn {
-            0% {
-                opacity: 0;
-                visibility: hidden;
-            }
-            100% {
-                opacity: 1;
-                visibility: visible;
-            }
-
-        /* Responsividade */
-        @media screen and (max-width: 768px) {
-            body {
-                padding-left: 20px;
-                padding-right: 20px;
-            }
-
-            .container {
-                padding: 15px;
-            }
+/* Animação de fadeIn para a mensagem */
+@keyframes fadeIn {
+    0% {
+      opacity: 1;
+      visibility: visible;
+      animation: fadeOut 6s forwards; /* A mensagem desaparecerá após 6 segundos */
+    }
+    100% {
+        opacity: 0;
+        visibility: hidden;
+        top: -50px;
+    }
+}
 
             h1 {
                 font-size: 24px;
@@ -209,54 +174,77 @@
 {% include 'menu.html' %}
       <!-- Contêiner de Exclusão -->
     <div class="container">
-        <h1>Excluir Despesa</h1>
+        <h1>Excluir Veículo</h1>
 
         <!-- Exibir Mensagens de Sucesso ou Erro -->
-       <div class="flash-messages">
+    <div class="flash-messages">
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
             {% for category, message in messages %}
-                <div class="flash-message {{ category }}">{{ message }}</div>
+                <div class="flash-message {{ category }}">
+                    {{ message }}
+                </div>
             {% endfor %}
         {% endif %}
     {% endwith %}
 </div>
 
 
+
         <!-- Exibe o Formulário de Exclusão (Somente no GET) -->
-        <form method="POST" action="{{ url_for('excluir_despesa') }}">
+        <form method="POST" action="{{ url_for('excluir_veiculo') }}">
             <div class="form-group">
-                <label for="descrição">Descrição da Despesa:</label>
-                <input type="text" id="descrição" name="descrição" value="{{ buscar[0][1] if buscar else '' }}" required>
+                <label for="id_veiculo">ID do Veículo:</label>
+                <input type="number" id="id_veiculo" name="id_veiculo" value="{{ carro[0][0] if carro else '' }}" required>
             </div>
 
             <div class="form-group">
-                <button type="submit">Buscar Despesa</button>
+                <button type="submit">Buscar Veículo</button>
             </div>
         </form>
 
         <!-- Se uma despesa for encontrada, exibe os dados para confirmação -->
-        {% if buscar %}
-            <form method="POST" action="{{ url_for('excluir_despesa') }}">
+        {% if carro %}
+             <form method="POST" action="{{ url_for('excluir_veiculo') }}">
+                <input type="hidden" name="id_veiculo" value="{{ carro[0][0] }}">
+
                 <div class="form-group">
-                    <label>Descrição:</label>
-                    <input type="text" value="{{ buscar[0][1] }}" readonly>
+                    <label>Proprietário:</label>
+                    <input type="text" value="{{ carro[0][1] }}" readonly>
                 </div>
 
                 <div class="form-group">
-                    <label>Data:</label>
-                    <input type="text" value="{{ buscar[0][2] }}" readonly>
+                    <label>Marca / Modelo / Ano:</label>
+                    <input type="text" value="{{ carro[0][2] }}" readonly>
                 </div>
 
                 <div class="form-group">
-                    <label>Valor:</label>
-                    <input type="text" value="{{ buscar[0][3] }}" readonly>
+                    <label>Fipe:</label>
+                    <input type="number" value="{{ carro[0][3] }}" readonly>
+                </div>
+
+                <div class="form-group">
+                    <label>Placa:</label>
+                    <input type="text" value="{{ carro[0][4] }}" readonly>
+                </div>
+
+                <div class="form-group">
+                    <label>Data de entrada:</label>
+                    <input type="text" value="{{ carro[0][5] }}" readonly>
+                </div>
+
+                <div class="form-group">
+                    <label>Status:</label>
+                    <input type="text" value="{{ carro[0][6] }}" readonly>
                 </div>
 
                             <!-- Enviando os dados necessários no POST -->
-                <input type="hidden" name="descricao" value="{{ buscar[0][1] }}">
-                <input type="hidden" name="valor_despesa" value="{{ buscar[0][2] }}">
-                <input type="hidden" name="data_despesa" value="{{ buscar[0][3] }}">
+                <input type="hidden" name="id_carro" value="{{ carro[0][1] }}">
+                <input type="hidden" name="proprietario" value="{{ carro[0][2] }}">
+                <input type="hidden" name="Marca_modelo_ano" value="{{ carro[0][3] }}">
+                 <input type="hidden" name="fipe" value="{{ carro[0][4] }}">
+                <input type="hidden" name="data_entrada" value="{{ carro[0][5] }}">
+                <input type="hidden" name="status" value="{{ carro[0][6] }}">
 
                      <button type="submit" name="confirmar" value="sim">Confirmar</button>
             </form>
