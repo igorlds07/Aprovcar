@@ -88,18 +88,3 @@ app.py: Arquivo principal da aplicação Flask.
 BD.py: Configurações de conexão com o banco de dados.
 templates/: Pasta contendo os arquivos HTML para as páginas da aplicação.
 static/: Pasta para arquivos estáticos (CSS, imagens).
-🤝 Contribuição
-Contribuições são bem-vindas! Se você quiser melhorar o projeto, siga os passos abaixo:
-
-Faça um fork do repositório.
-Crie um branch para seu feature ( git checkout -b feature/nova-feature).
-Comprometa suas mudanças ( git commit -m 'Adicionando nova feature').
-Empurre para um branch ( git push origin feature/nova-feature).
-Abra um Pull Request.
-📄 Licença
-Este projeto está sob licença MIT. Veja o arquivo LICENSE para mais detalhes.
-
-🙌 Agradecimentos
-Obrigado por utilizar o Sistema de Gerenciamento de Garagem de Vendas de Carros! Esperamos que ele facilite seu dia a dia e ajude a manter sua garagem organizada e eficiente. Se tiver alguma dúvida ou sugestão, sinta-se à vontade para entrar em contato.
-
-Boa codificação! 🚀
