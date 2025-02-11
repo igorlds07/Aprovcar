@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Excluir Despesa</title>
+    <title>Excluir Veículo</title>
     <style>
-        /* Resetando margens e preenchimentos */
+         /* Resetando margens e preenchimentos */
 * {
     margin: 0;
     padding: 0;
@@ -15,7 +15,9 @@
 body {
     font-family: Arial, sans-serif;
     background: linear-gradient(to bottom, #000000, #333333);
-    padding: 20px 20px 20px 220px; /* Espaço para o menu fixo */
+    padding-top: 20px;
+    padding-left: 220px; /* Espaço para o menu fixo */
+    padding-right: 20px;
     min-height: 100vh;
 }
 
@@ -48,7 +50,7 @@ body {
     transform: scale(1.05);
 }
 
-/* Estilo para o conteúdo principal */
+/* Estilo para o conteúdo principal da página */
 .container {
     width: 100%;
     max-width: 800px;
@@ -66,6 +68,7 @@ h1 {
     border-bottom: 2px solid #32CD32;
 }
 
+/* Estilização do formulário */
 .form-group {
     margin-bottom: 20px;
 }
@@ -93,6 +96,7 @@ h1 {
     outline: none;
 }
 
+/* Botões */
 button[type="submit"], .confirm-button {
     background-color: #32CD32;
     color: white;
@@ -110,39 +114,30 @@ button[type="submit"]:hover, .confirm-button:hover {
 }
 
 /* Estilo das mensagens flash */
-.flash-messages {
-    margin-top: 20px;
-}
-
 .flash-message {
-    padding: 15px;
-    border-radius: 5px;
+    padding: 10px;
     margin-bottom: 15px;
-    font-size: 16px;
+    border-radius: 5px;
+    font-weight: bold;
     text-align: center;
-    opacity: 1;
     animation: fadeOut 6s forwards;
 }
 
+/* Sucesso */
 .flash-message.success {
-    background-color: #d4edda;
-    border: 1px solid #c3e6cb;
+    background-color: #008000;
     color: #155724;
+    border: 1px solid #0b6623;
 }
 
+/* Erro */
 .flash-message.error {
-    background-color: #f8d7da;
-    border: 1px solid #f5c6cb;
+    background-color: #f8d7da; /* Vermelho mais forte */
     color: #721c24;
+    border: 1px solid #d32f2f;
 }
 
-.flash-message.warning {
-    background-color: #fff3cd;
-    border: 1px solid #ffeeba;
-    color: #856404;
-}
-
-/* Animação para esconder as mensagens flash */
+/* Animação de desaparecimento */
 @keyframes fadeOut {
     0% {
         opacity: 1;
@@ -154,22 +149,6 @@ button[type="submit"]:hover, .confirm-button:hover {
     }
 }
 
-/* Responsividade */
-@media screen and (max-width: 768px) {
-    body {
-        padding-left: 20px;
-        padding-right: 20px;
-    }
-
-    .container {
-        padding: 15px;
-    }
-
-    h1 {
-        font-size: 24px;
-    }
-}
-
     </style>
 </head>
 <body>
@@ -177,54 +156,75 @@ button[type="submit"]:hover, .confirm-button:hover {
 {% include 'menu.html' %}
       <!-- Contêiner de Exclusão -->
     <div class="container">
-        <h1>Excluir Despesa</h1>
+        <h1>Excluir Veículo</h1>
 
         <!-- Exibir Mensagens de Sucesso ou Erro -->
-       <div class="flash-messages">
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            {% for category, message in messages %}
-                <div class="flash-message {{ category }}">{{ message }}</div>
-            {% endfor %}
-        {% endif %}
-    {% endwith %}
-</div>
-
+        <div class="flash-messages">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash-message {{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
 
         <!-- Exibe o Formulário de Exclusão (Somente no GET) -->
-        <form method="POST" action="{{ url_for('excluir_despesa') }}">
+        <form method="POST" action="{{ url_for('excluir_veiculo') }}">
             <div class="form-group">
-                <label for="descrição">Descrição da Despesa:</label>
-                <input type="text" id="descrição" name="descrição" value="{{ buscar[0][1] if buscar else '' }}" required>
+                <label for="id_veiculo">ID do Veículo:</label>
+                <input type="number" id="id_veiculo" name="id_veiculo" value="{{ carro[0][0] if carro else '' }}" required>
             </div>
 
             <div class="form-group">
-                <button type="submit">Buscar Despesa</button>
+                <button type="submit">Buscar Veículo</button>
             </div>
         </form>
 
         <!-- Se uma despesa for encontrada, exibe os dados para confirmação -->
-        {% if buscar %}
-            <form method="POST" action="{{ url_for('excluir_despesa') }}">
+        {% if carro %}
+             <form method="POST" action="{{ url_for('excluir_veiculo') }}">
+                <input type="hidden" name="id_veiculo" value="{{ carro[0][0] }}">
+
                 <div class="form-group">
-                    <label>Descrição:</label>
-                    <input type="text" value="{{ buscar[0][1] }}" readonly>
+                    <label>Proprietário:</label>
+                    <input type="text" value="{{ carro[0][1] }}" readonly>
                 </div>
 
                 <div class="form-group">
-                    <label>Data:</label>
-                    <input type="text" value="{{ buscar[0][2] }}" readonly>
+                    <label>Marca / Modelo / Ano:</label>
+                    <input type="text" value="{{ carro[0][2] }}" readonly>
                 </div>
 
                 <div class="form-group">
-                    <label>Valor:</label>
-                    <input type="text" value="{{ buscar[0][3] }}" readonly>
+                    <label>Fipe:</label>
+                    <input type="number" value="{{ carro[0][3] }}" readonly>
+                </div>
+
+                <div class="form-group">
+                    <label>Placa:</label>
+                    <input type="text" value="{{ carro[0][4] }}" readonly>
+                </div>
+
+                <div class="form-group">
+                    <label>Data de entrada:</label>
+                    <input type="text" value="{{ carro[0][5] }}" readonly>
+                </div>
+
+                <div class="form-group">
+                    <label>Status:</label>
+                    <input type="text" value="{{ carro[0][6] }}" readonly>
                 </div>
 
                             <!-- Enviando os dados necessários no POST -->
-                <input type="hidden" name="descricao" value="{{ buscar[0][1] }}">
-                <input type="hidden" name="valor_despesa" value="{{ buscar[0][2] }}">
-                <input type="hidden" name="data_despesa" value="{{ buscar[0][3] }}">
+                <input type="hidden" name="id_carro" value="{{ carro[0][1] }}">
+                <input type="hidden" name="proprietario" value="{{ carro[0][2] }}">
+                <input type="hidden" name="Marca_modelo_ano" value="{{ carro[0][3] }}">
+                 <input type="hidden" name="fipe" value="{{ carro[0][4] }}">
+                <input type="hidden" name="data_entrada" value="{{ carro[0][5] }}">
+                <input type="hidden" name="status" value="{{ carro[0][6] }}">
 
                      <button type="submit" name="confirmar" value="sim">Confirmar</button>
             </form>

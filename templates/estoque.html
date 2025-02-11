@@ -5,102 +5,102 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gerenciar Estoque</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+       /* Reset de estilos padrão */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
-        body {
-            font-family: Arial, sans-serif;
-            background: linear-gradient(to bottom, #000000, #333333);
-            color: #000000;
-            min-height: 100vh;
-            margin-bottom: 80px;
-        }
+/* Estilo do corpo */
+body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(to bottom, #000000, #333333);
+    color: #000000;
+    min-height: 100vh;
+    margin-bottom: 80px;
+}
 
-        .container {
-            margin-left: 310px;
-            padding: 20px;
-            max-width: 900px;
-            width: 100%;
-            margin-top: 50px;
-            background: #C0C0C0;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
+/* Container principal */
+.container {
+    margin-left: 310px;
+    padding: 20px;
+    max-width: 900px;
+    width: 100%;
+    margin-top: 50px;
+    background: #C0C0C0;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
 
-        h1 {
-            text-align: center;
-            color: #000000;
-            margin-bottom: 30px;
-            border-bottom: 2px solid #32CD32;
-        }
+/* Título principal */
+h1 {
+    text-align: center;
+    color: #000000;
+    margin-bottom: 30px;
+    border-bottom: 2px solid #32CD32;
+}
 
-        .form-group {
-            margin-bottom: 20px;
-        }
+/* Estilo dos grupos de formulário */
+.form-group {
+    margin-bottom: 20px;
+}
 
-        .form-group label {
-            display: block;
-            font-weight: bold;
-            color: #000000;
-            margin-bottom: 8px;
-        }
+.form-group label {
+    display: block;
+    font-weight: bold;
+    color: #000000;
+    margin-bottom: 8px;
+}
 
-        .form-group input,
-        .form-group select {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            font-size: 16px;
-            color: #000000;
-            background-color: #DCDCDC;
-        }
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 16px;
+    color: #000000;
+    background-color: #DCDCDC;
+}
 
-        .form-group input:focus,
-        .form-group select:focus {
-            border-color: #000000;
-            outline: none;
-        }
+.form-group input:focus,
+.form-group select:focus {
+    border-color: #000000;
+    outline: none;
+}
 
-        .form-group input[type="submit"] {
-            background-color: #32CD32;
-            color: white;
-            border: none;
-            cursor: pointer;
-            font-size: 18px;
-            padding: 15px;
-            border-radius: 5px;
-            transition: background-color 0.3s;
-        }
-
-        .form-group input[type="submit"]:hover {
-            background-color: #008000;
-        }
-
-        .button-container {
-            text-align: center;
-            margin-top: 20px;
-        }
-
-        .button-container button {
-            background-color: #32CD32;
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            font-size: 16px;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        .button-container button:hover {
-            background-color: #008000;
-        }
-        /* Estilo para o botão de visualizar estoque */
+/* Botão de envio */
+.form-group input[type="submit"],
 button[type="submit"] {
+    background-color: #32CD32;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    padding: 15px;
+    border-radius: 5px;
+    transition: background-color 0.3s, transform 0.2s;
+    width: 100%;
+}
+
+.form-group input[type="submit"]:hover,
+button[type="submit"]:hover {
+    background-color: #008000;
+}
+
+.form-group input[type="submit"]:active,
+button[type="submit"]:active {
+    background-color: #006400;
+}
+
+/* Botões gerais */
+.button-container {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.button-container button {
     background-color: #32CD32;
     color: white;
     border: none;
@@ -108,55 +108,116 @@ button[type="submit"] {
     font-size: 16px;
     border-radius: 5px;
     cursor: pointer;
-    transition: background-color 0.3s, transform 0.2s;
-    margin-top: 10px;
-    width: 100%;
+    transition: background-color 0.3s;
 }
 
-button[type="submit"]:hover {
+.button-container button:hover {
     background-color: #008000;
-
 }
 
-button[type="submit"]:active {
-    background-color: #006400;
-
+/* Estilo para a tabela */
+.table-container {
+    display: block;
+    margin-top: 30px;
 }
 
-        .table-container {
-             display: block;
-             margin-top: 30px;
-        }
-        table-container.active {
-            display: block; /* Mostra quando a classe 'active' for adicionada */
-        }
+.table-container.active {
+    display: block; /* Mostra quando a classe 'active' for adicionada */
+}
 
-        table {
-            margin-top: 15px;
-            width: 100%;
-            border-collapse: collapse;
-            background: white;
-            border-radius: 8px;
-            overflow: hidden;
-        }
+table {
+    margin-top: 15px;
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+}
 
-        th, td {
-            border: 1px solid #ddd;
-            padding: 12px;
-            text-align: left;
-        }
+th, td {
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: left;
+}
 
-        th {
-            background-color: #32CD32;
-            color: white;
-        }
+th {
+    background-color: #32CD32;
+    color: white;
+}
 
-        @media (max-width: 768px) {
-            .container {
-                margin-left: 0;
-                padding: 10px;
-            }
-        }
+/* FLASH MESSAGES */
+.flash-messages {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 300px;
+    z-index: 1000;
+}
+
+.flash-message {
+    padding: 12px 16px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    font-weight: bold;
+    text-align: center;
+    animation: fadeOut 6s forwards; /* A mensagem desaparecerá após 6 segundos */
+}
+
+/* Cores das mensagens */
+.flash-message.success {
+    background-color: #008000;
+    color: white;
+    border: 1px solid #a5d6a7;
+}
+
+.flash-message.error {
+    background-color: #ffebee;
+    color: #c62828;
+    border: 1px solid #ef9a9a;
+}
+
+.flash-message.warning {
+    background-color: #FF9800;
+    color: white;
+}
+
+.flash-message.info {
+    background-color: #2196F3;
+    color: white;
+}
+
+/* Animação de entrada e saída das mensagens */
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+        visibility: hidden;
+    }
+    100% {
+        opacity: 1;
+        visibility: visible;
+    }
+}
+
+@keyframes fadeOut {
+    0% {
+        opacity: 1;
+        visibility: visible;
+    }
+    100% {
+        opacity: 0;
+        visibility: hidden;
+        top: -50px;
+    }
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .container {
+        margin-left: 0;
+        padding: 10px;
+    }
+}
+
     </style>
 </head>
 <body>
@@ -169,7 +230,7 @@ button[type="submit"]:active {
             {% if messages %}
                 <div class="messages">
                     {% for category, message in messages %}
-                        <div class="flash-message alert-{{ category }}">
+                        <div class=" flash-message {{ category }}">
                             {{ message }}
                         </div>
                     {% endfor %}
