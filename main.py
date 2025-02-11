@@ -102,7 +102,7 @@ def cadastrar():
         conexao.close()
 
         message = 'Cadastrado com sucesso!'
-        sucess_mesagge = 'Cadastrado com sucesso'
+        sucess_mesagge = 'Cliente cadastrado com sucesso'
         print(sucess_mesagge)
 
         # Ao clicar o botão cadastrar e emetido a mensagem de 'sucesso' e  retorna a  página de cadastro
@@ -642,7 +642,7 @@ def relatorio_vendedor():
     return render_template('relatorio_vendedor.html', resultado=resultado)
 
 
-@app.route('/relatorio_geral', methods=['GET', 'POST'])
+'''@app.route('/relatorio_geral', methods=['GET', 'POST'])
 def relatorio_geral():
     conexao = conexao_bd()
     cursor = conexao.cursor()
@@ -650,18 +650,92 @@ def relatorio_geral():
     if request.method == 'POST':
         data_inicio = request.form['data_inicio']
         data_fim = request.form['data_fim']
-        gera_excel = request.form['gera_excel']
+        gerar_excel = 'gerar_excel' in request.form
 
         if data_inicio and data_fim:
-            data_inicio = datetime.strptime(data_inicio, '%d-m%-Y%')
-            data_fim = datetime.strptime(data_fim, '%d-m%-Y%')
+            data_inicio = datetime.strptime(data_inicio, '%Y-%m-%d')
+            data_fim = datetime.strptime(data_fim, '%Y-%m-%d')
 
             if data_fim < data_inicio:
-                flash('A data final não pode ser menor que a data de inicío', 'error')
+                flash('A data final não pode ser menor que a data de início', 'error')
                 return render_template('relatorio_geral.html')
 
+        # Consulta para consolidar vendas, despesas e comissões
         query = """
+            SELECT 
+                'Venda' AS tipo,
+                v.idvendas AS id,
+                v.Data_venda AS data,
+                v.Valor_liquido AS valor
+            FROM vendas v
+            WHERE v.Data_venda BETWEEN %s AND %s
+            UNION ALL
+            SELECT 
+                'Despesa' AS tipo,
+                d.iddespesas AS id,
+                d.data_despesa AS data,
+                -d.valor_despesa AS valor
+            FROM despesas d
+            WHERE d.data_despesa BETWEEN %s AND %s
+            UNION ALL
+            SELECT 
+                'Comissão' AS tipo,
+                c.idcomissão AS id,
+                c.data_comissao AS data,
+                -c.valor_comissao AS valor
+            FROM comissão c
+            WHERE c.data_comissao BETWEEN %s AND %s
+            ORDER BY data;
         """
+        cursor.execute(query, (data_inicio, data_fim, data_inicio, data_fim, data_inicio, data_fim))
+        resultados = cursor.fetchall()
+
+        if not resultados:
+            flash('Nenhum resultado encontrado no período!', 'error')
+            return render_template('relatorio_geral.html')
+
+        if gerar_excel:
+            # Cria um DataFrame com os resultados
+            colunas = ["Tipo", "ID", "Data", "Valor"]
+            df = pd.DataFrame(resultados, columns=colunas)
+
+            # Salva o DataFrame em um arquivo Excel na memória
+            output = BytesIO()
+            df.to_excel(output, index=False, sheet_name='Relatório Geral')
+            output.seek(0)
+
+            # Configura a resposta para download
+            response = make_response(output.getvalue())
+            response.headers["Content-Disposition"] = "attachment; filename=relatorio_geral.xlsx"
+            response.headers["Content-Type"] = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            flash('Relatório gerado com sucesso!', 'success')
+            return response
+
+        # Calcula totais
+        total_vendas = sum(row[3] for row in resultados if row[0] == 'Venda')
+        total_despesas = sum(row[3] for row in resultados if row[0] == 'Despesa')
+        total_comissoes = sum(row[3] for row in resultados if row[0] == 'Comissão')
+        saldo_final = total_vendas + total_despesas + total_comissoes
+
+        # Formata as datas para exibição
+        data_inicio_formatada = data_inicio.strftime('%d/%m/%Y')
+        data_fim_formatada = data_fim.strftime('%d/%m/%Y')
+
+        message = (
+            f'Data início: {data_inicio_formatada} <br>'
+            f'Data fim: {data_fim_formatada} <br>'
+            f'Total Vendas: {format_currency(total_vendas, "BRL", locale="pt_BR")} <br>'
+            f'Total Despesas: {format_currency(total_despesas, "BRL", locale="pt_BR")} <br>'
+            f'Total Comissões: {format_currency(total_comissoes, "BRL", locale="pt_BR")} <br>'
+            f'Saldo Final: {format_currency(saldo_final, "BRL", locale="pt_BR")}'
+        )
+
+        conexao.close()
+        cursor.close()
+
+        return render_template('relatorio_geral.html', resultados=resultados, message=message)
+
+    return render_template('relatorio_geral.html')'''
 
 
 @app.route('/despesas', methods=['GET', 'POST'])
@@ -683,7 +757,7 @@ def despesas():
         conexao.close()
         cursor.close()
         print(f'Despesas foram inseridas {descricao} , {data}, {valor} ')
-        flash('Despesa acrescentada com sucesso!', 'sucess')
+        flash('Despesa adicionada com sucesso!', 'sucess')
 
         return render_template('despesas.html')
 
@@ -708,7 +782,7 @@ def excluir_despesa():
             cursor.execute('SELECT * FROM despesas WHERE descrição = %s;', (despesa,))
             buscar = cursor.fetchall()
             if not buscar:
-                flash('Despesa não encontrada.', 'error')
+                flash('Despesa não encontrada!', 'error')
                 return render_template('excluir_despesa.html')
 
         # Se o usuário confirmou a exclusão
@@ -773,7 +847,14 @@ def vendas():
                    taxa_financiamento, comissao_total, transferencia, comissao_vendedor, corretor, dizimo,
                    valor_liquido)
 
+        comando2 = """
+        INSERT INTO comissão(idvendedor, idcarro, data_comissao, valor_comissao)
+        VALUES(%s, %s, %s, %s);
+        """
+        valores2 = (idvendedor, idcarro, data_venda, comissao_vendedor)
+
         cursor.execute(comando, valores)
+        cursor.execute(comando2, valores2)
         status = "Vendido"
         # Atualizar status do carro para vendido
         cursor.execute(
@@ -855,15 +936,18 @@ def excluir_veiculo():
                 return render_template('excluir_veiculo.html')
 
         if confirmar == 'sim':
+            status = carro[0][6]
+            if status == "Vendido":
+                flash('O veículo não pode ser excluido', 'error')
+                return render_template('excluir_veiculo.html')
             id_veiculo = int(id_carro)
             print('Confirmado')
             cursor.execute('DELETE FROM estoque WHERE idcarro = %s;', (id_veiculo, ))
             conexao.commit()
-            flash('Veículo excluido com sucesso', 'sucess')
+            flash('Veículo excluido com sucesso', 'success')
             carro = []
 
     return render_template('excluir_veiculo.html', carro=carro)
-
 
 
 @app.template_filter('real')

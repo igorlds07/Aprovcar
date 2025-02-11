@@ -5,203 +5,171 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Excluir Despesa</title>
     <style>
-         /* Resetando margens e preenchimentos */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        /* Resetando margens e preenchimentos */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
-        body {
-            font-family: Arial, sans-serif;
-            background: linear-gradient(to bottom, #000000, #333333);
-            padding-top: 20px;
-            padding-left: 220px; /* Espaço para o menu fixo */
-            padding-right: 20px;
-            min-height: 100vh;
-        }
+body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(to bottom, #000000, #333333);
+    padding: 20px 20px 20px 220px; /* Espaço para o menu fixo */
+    min-height: 100vh;
+}
 
-        /* Estilo para o menu fixo à esquerda */
-        .menu {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            z-index: 1000;
-        }
+/* Estilo para o menu fixo à esquerda */
+.menu {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    z-index: 1000;
+}
 
-        .menu button {
-            background-color: #007bff;
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            border-radius: 5px;
-            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-            transition: background-color 0.3s ease, transform 0.2s ease;
-        }
+.menu button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 5px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
 
-        .menu button:hover {
-            background-color: #0056b3;
-            transform: scale(1.05);
-        }
+.menu button:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+}
 
-        /* Estilo para o conteúdo principal da página */
-        .container {
-            width: 100%;
-            max-width: 800px;
-            margin: 50px auto;
-            background-color: #C0C0C0;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.1);
-        }
+/* Estilo para o conteúdo principal */
+.container {
+    width: 100%;
+    max-width: 800px;
+    margin: 50px auto;
+    background-color: #C0C0C0;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.1);
+}
 
-        h1 {
-            text-align: center;
-            color: #000;
-            margin-bottom: 30px;
-             border-bottom: 2px solid #32CD32;
-        }
+h1 {
+    text-align: center;
+    color: #000;
+    margin-bottom: 30px;
+    border-bottom: 2px solid #32CD32;
+}
 
-        .form-group {
-            margin-bottom: 20px;
-        }
+.form-group {
+    margin-bottom: 20px;
+}
 
-        .form-group label {
-            display: block;
-            font-weight: bold;
-            color: #000;
-            margin-bottom: 8px;
-        }
+.form-group label {
+    display: block;
+    font-weight: bold;
+    color: #000;
+    margin-bottom: 8px;
+}
 
-        .form-group input {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            font-size: 16px;
-            color: #000;
-            background-color: #DCDCDC;
-            transition: border-color 0.3s;
-        }
+.form-group input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 16px;
+    color: #000;
+    background-color: #DCDCDC;
+    transition: border-color 0.3s;
+}
 
-        .form-group input:focus {
-            border-color: #007bff;
-            outline: none;
-        }
+.form-group input:focus {
+    border-color: #007bff;
+    outline: none;
+}
 
-        button[type="submit"], .confirm-button {
-            background-color: #32CD32;
-            color: white;
-            padding: 12px 20px;
-            font-size: 16px;
-            border: none;
-            cursor: pointer;
-            border-radius: 5px;
-            transition: background-color 0.3s;
-            width: 100%;
-        }
+button[type="submit"], .confirm-button {
+    background-color: #32CD32;
+    color: white;
+    padding: 12px 20px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+    width: 100%;
+}
 
-        button[type="submit"]:hover, .confirm-button:hover {
-            background-color: #008000;
-        }
+button[type="submit"]:hover, .confirm-button:hover {
+    background-color: #008000;
+}
 
-        /* Estilo das mensagens */
-        .messages {
-            margin-top: 20px;
-        }
+/* Estilo das mensagens flash */
+.flash-messages {
+    margin-top: 20px;
+}
 
-        .alert {
-            padding: 15px;
-            border-radius: 5px;
-            margin-bottom: 15px;
-            font-size: 16px;
-            text-align: center;
-        }
+.flash-message {
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 15px;
+    font-size: 16px;
+    text-align: center;
+    opacity: 1;
+    animation: fadeOut 6s forwards;
+}
 
-        .alert-success {
-            background-color: #d4edda;
-            border: 1px solid #c3e6cb;
-            color: #155724;
-        }
+.flash-message.success {
+    background-color: #d4edda;
+    border: 1px solid #c3e6cb;
+    color: #155724;
+}
 
-        .alert-error {
-            background-color: #f8d7da;
-            border: 1px solid #f5c6cb;
-            color: #721c24;
-        }
+.flash-message.error {
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    color: #721c24;
+}
 
-        .alert-warning {
-            background-color: #fff3cd;
-            border: 1px solid #ffeeba;
-            color: #856404;
-        }
+.flash-message.warning {
+    background-color: #fff3cd;
+    border: 1px solid #ffeeba;
+    color: #856404;
+}
 
-        .success-message, .error-message, .warning-message {
-            text-align: center;
-            font-size: 14px;
-            margin-top: 20px;
-            animation: fadeOut 6s forwards; /* A mensagem desaparecerá após 6 segundos */
-        }
+/* Animação para esconder as mensagens flash */
+@keyframes fadeOut {
+    0% {
+        opacity: 1;
+        visibility: visible;
+    }
+    100% {
+        opacity: 0;
+        visibility: hidden;
+    }
+}
 
-        .success-message {
-            color: green;
-            animation: fadeOut 6s forwards; /* A mensagem desaparecerá após 6 segundos */
-        }
+/* Responsividade */
+@media screen and (max-width: 768px) {
+    body {
+        padding-left: 20px;
+        padding-right: 20px;
+    }
 
-        .error-message {
-            color: red;
-            animation: fadeOut 6s forwards; /* A mensagem desaparecerá após 6 segundos */
-        }
+    .container {
+        padding: 15px;
+    }
 
-        .warning-message {
-            color: orange;
-        }
-        /* Animações */
-        @keyframes fadeOut {
-            0% {
-                opacity: 1;
-                visibility: visible;
-                animation: fadeOut 6s forwards; /* A mensagem desaparecerá após 6 segundos */
-            }
-            100% {
-                opacity: 0;
-                visibility: hidden;
-                top: -50px;
-            }
-        }
+    h1 {
+        font-size: 24px;
+    }
+}
 
-        /* Responsividade */
-        @keyframes fadeIn {
-            0% {
-                opacity: 0;
-                visibility: hidden;
-            }
-            100% {
-                opacity: 1;
-                visibility: visible;
-            }
-
-        /* Responsividade */
-        @media screen and (max-width: 768px) {
-            body {
-                padding-left: 20px;
-                padding-right: 20px;
-            }
-
-            .container {
-                padding: 15px;
-            }
-
-            h1 {
-                font-size: 24px;
-            }
-        }
     </style>
 </head>
 <body>
