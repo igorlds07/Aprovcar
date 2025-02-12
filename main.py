@@ -249,21 +249,38 @@ def clientes():
     return render_template('clientes.html', clientes=cliente_cadastrado)
 
 
+# Rota para cadastrar e visualizar todos os funcionários
 @app.route('/funcionarios', methods=['GET', 'POST'])
 def funcionarios():
+    """
+    Função para cadastra um novo vendedor e isererir no banco de dados, de acordo com os dados passado pelo administra
+    .Também permite visualizar todos os vendedores já cadastrados quando solicitados.
+
+    Metódos:
+
+    GET: Busca todos os vendedores no banco de dados.
+    POST: Cadastra um novo vendedor de acordo com os dados passado no formulário.
+
+    :return: renderiza o template 'fuincionarios.html' com uma lista de vendedores ou message de sucesso ou erro.
+    """
+
+    # Conexão com o banco de dados
     conexao = conexao_bd()
     cursor = conexao.cursor()
 
+    # Se a requisição for GET, busca todos os funcionários no banco de dados
     if request.method == 'GET' and 'ver_todos' in request.args:
-        comando = 'SELECT * FROM vendedor;'
+        comando = 'SELECT * FROM vendedor;'  # Comando em SQL para buscar todos os vendedores
         cursor.execute(comando, )
         funcionario = cursor.fetchall()
         print(funcionario)
-        if not funcionario:
+        if not funcionario:  # Condição se o  vendedor não for encontrado, renderiza uma mensagem de erro
             flash('Nenhum vendedor foi encontrado !', 'error')
 
+        # Retorna a página com todos os vendedores encontrados
         return render_template('funcionarios.html', funcionarios=funcionario)
 
+    # Se a requisição for POST, cadastra um novo vendedor no banco de dados
     if request.method == 'POST':
         nome = request.form['nome'].title()
         cpf = request.form['cpf']
@@ -275,17 +292,26 @@ def funcionarios():
         comando = ("INSERT INTO vendedor (nome, cpf, contato, data_nascimento, data_admissão)"
                    " VALUES (%s, %s, %s, %s, %s);")
         cursor.execute(comando, (nome, cpf, contato, data_nascimento, data_admissao))
+
+        # Comando para salvar no banco de dados
         conexao.commit()
         flash('Funcionário cadastrado com sucesso !', 'success')
         funcionarios_cadastrados = cursor.fetchall()
 
+        # Retorna a página com a mensagem de de sucesso
         return render_template('funcionarios.html', funcionarios=funcionarios_cadastrados)
 
+    # Se nenhuma das condições a cima acontecer retorna a página novamente
     return render_template('funcionarios.html')
 
 
+# Rota para excluir um funcionário
 @app.route('/excluir_funcionario', methods=['GET', 'POST'])
 def excluir_funcionario():
+    """
+    
+    :return:
+    """
     conexao = conexao_bd()
     cursor = conexao.cursor()
     vendedor = None
@@ -1024,7 +1050,6 @@ def caixa_diario():
 
 @app.route('/calcular_repasse', methods=['GET', 'POST'])
 def calcular_repasse():
-    resposta = None
 
     if request.method == 'POST':
         print(request.form)
