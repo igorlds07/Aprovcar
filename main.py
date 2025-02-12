@@ -823,7 +823,23 @@ def vendas():
         vendedor = cursor.fetchone()
         if not vendedor:
             flash("Vendedor não encontrado!", "error")
-            return redirect(url_for('formulario_venda'))
+            return redirect(url_for('vendas'))
+
+        cursor.execute("SELECT status from estoque WHERE idcarro = %s;", (idcarro, ))
+
+        status_atual = cursor.fetchone()
+        print(status_atual)
+
+        status = "Disponível"
+
+        if status_atual:
+
+            status_atual = status_atual[0]
+            print(status_atual)
+
+            if status_atual != status:
+                flash("Este carro já foi vendido !", 'error')
+                return render_template('vendas.html')
 
         # Validar se o carro existe e não foi vendido
         cursor.execute("SELECT * FROM estoque WHERE idcarro = %s", (idcarro,))
