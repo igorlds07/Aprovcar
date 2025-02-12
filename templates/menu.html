@@ -7,13 +7,13 @@
     <!-- Link para a biblioteca Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
-        /* Estilo para a logo */
-        .logo {
-            width: 195px; /* Tamanho da logo */
-            margin-bottom: 5px; /* Espaçamento abaixo da logo */
-            margin-left: 10px;
+         body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
         }
-        /* Estilo do menu fixo */
+
         .menu {
             position: fixed;
             top: 0;
@@ -25,13 +25,16 @@
             box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
             display: flex;
             flex-direction: column;
-            gap: 20px;
-        }
-        .sair {
-            margin-top: 30px; /* Empurra o botão para o final do menu */
+            gap: 15px;
+            z-index: 1000;
         }
 
-        /* Estilo para os itens principais do menu */
+        .logo {
+            width: 195px;
+            margin-bottom: 20px;
+            margin-left: 10px;
+        }
+
         .menu-item {
             position: relative;
         }
@@ -40,43 +43,38 @@
             background-color: #32CD32;
             color: white;
             border: none;
-            padding: 10px;
+            padding: 12px;
             font-size: 16px;
-            font-weight: bold;
             cursor: pointer;
             border-radius: 5px;
             text-align: left;
             width: 100%;
             display: flex;
-            justify-content: space-between; /* Alinha o texto e o símbolo */
             align-items: center;
-            transition: background-color 0.3s ease;
+            gap: 10px;
+            transition: background-color 0.3s ease, transform 0.2s ease;
         }
 
         .menu-item > button:hover {
             background-color: #008000;
+            transform: translateX(10px);
         }
 
-        /* Adicionando símbolo para submenu */
-        .menu-item > button::after {
-            content: '>'; /* Símbolo de seta */
-            font-weight: bold;
+        .menu-item > button i {
             font-size: 18px;
         }
 
-        /* Estilo dos submenus */
         .submenu {
             display: none;
             position: absolute;
             top: 0;
-            left: 100%; /* Exibe o submenu à direita do botão principal */
-            background-color: #228B22;
+            left: 100%;
+            background-color: #008000;
             border-radius: 5px;
             box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.1);
             padding: 10px 0;
-
             flex-direction: column;
-            width: 200px; /* Define largura fixa para os submenus */
+            width: 200px;
         }
 
         .submenu a {
@@ -92,9 +90,22 @@
             background-color: #32CD32;
         }
 
-        /* Exibir submenu ao clicar no botão principal */
         .menu-item:focus-within .submenu {
-            display: flex; /* Exibe o submenu */
+            display: flex;
+        }
+        @media (max-width: 768px) {
+    .menu {
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: auto; /* Deixe o menu ocupar apenas o espaço necessário */
+        position: relative;
+    }
+
+        .sair {
+            position: absolute; /* Usar absolute para posicioná-lo de forma relativa ao menu */
+            bottom: 80px; /* Ajusta a distância do fundo */
+
         }
     </style>
 </head>
@@ -110,6 +121,21 @@
                 <a href="/caixa_diario">Visualizar</a>
             </div>
         </div>
+        <div class="menu-item">
+            <button tabindex="0"><i class="fas fa-hand-holding-usd"></i> Vendas</button>
+            <div class="submenu">
+                <a href="/vendas">Cadastrar Vendas</a>
+                <a href="/calcular_repasse">Calcular repasse</a>
+            </div>
+        </div>
+
+        <div class="menu-item">
+            <button tabindex="0"><i class="fas fa-file-invoice-dollar"></i> Despesas</button>
+            <div class="submenu">
+                <a href="/despesas">Inserir despesas</a>
+                <a href="/excluir_despesa">Excluir despesas</a>
+            </div>
+        </div>
 
         <div class="menu-item">
             <button tabindex="0"><i class="fas fa-users"></i> Clientes</button>
@@ -120,12 +146,13 @@
                 <a href="/clientes">Visualizar Clientes</a>
             </div>
         </div>
-
-        <div class="menu-item">
-            <button tabindex="0"><i class="fas fa-hand-holding-usd"></i> Vendas</button>
+         <div class="menu-item">
+            <button tabindex="0"><i class="fas fa-users-cog"></i> Vendedores</button>
             <div class="submenu">
-                <a href="/vendas">Cadastrar Vendas</a>
-                <a href="/calcular_repasse">Calcular repasse</a>
+                <a href="/funcionarios">Cadastrar e Visualizar</a>
+                <a href="/editar_funcionario">Editar Vendedor</a>
+                <a href="/excluir_funcionario">Excluir Vendedor</a>
+                <a href="/vendedor_atualizar">Atualizar Comissão</a>
             </div>
         </div>
 
@@ -137,16 +164,6 @@
             </div>
         </div>
 
-        <div class="menu-item">
-            <button tabindex="0"><i class="fas fa-users-cog"></i> Vendedores</button>
-            <div class="submenu">
-                <a href="/funcionarios">Cadastrar e Visualizar</a>
-                <a href="/editar_funcionario">Editar Vendedor</a>
-                <a href="/excluir_funcionario">Excluir Vendedor</a>
-                <a href="/vendedor_atualizar">Atualizar Comissão</a>
-            </div>
-        </div>
-
         <!-- Novo botão: Relatórios -->
         <div class="menu-item">
             <button tabindex="0"><i class="fas fa-chart-line"></i> Relatórios</button>
@@ -154,14 +171,6 @@
                 <a href="/relatorio_vendas">Relatório de Vendas</a>
                 <a href="/relatorio_despesas">Relatório de Despesas</a>
                 <a href="/relatorio_vendedor">Relatório de Vendedores</a>
-            </div>
-        </div>
-
-        <div class="menu-item">
-            <button tabindex="0"><i class="fas fa-file-invoice-dollar"></i> Despesas</button>
-            <div class="submenu">
-                <a href="/despesas">Inserir despesas</a>
-                <a href="/excluir_despesa">Excluir despesas</a>
             </div>
         </div>
 

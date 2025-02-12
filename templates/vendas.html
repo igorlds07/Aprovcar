@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastrar Venda</title>
     <style>
-           /* Reset básico */
+        /* Reset básico */
         * {
             margin: 0;
             padding: 0;
@@ -32,8 +32,8 @@
 
         .container {
             max-width: 900px;
-            width: 100%;
             margin-left: 250px;
+            width: 100%;
             margin-top: 50px;
             padding: 20px;
             background: #C0C0C0;
@@ -85,6 +85,7 @@
 
         /* Estilos para mensagens flash */
         .messages {
+            width: 100%;
             margin-bottom: 20px;
         }
 
@@ -96,19 +97,46 @@
             margin-bottom: 5px;
         }
 
-        .alert-success {
+        .message-success {
             background-color: #32CD32;
             color: white;
+            animation: fadeOut 6s forwards; /* A mensagem desaparecerá após 6 segundos */
         }
 
-        .alert-danger {
-            background-color: #FF6347;
+        .message-error {
+            background-color: #B22222;
             color: white;
+            animation: fadeOut 6s forwards; /* A mensagem desaparecerá após 6 segundos */
         }
 
-        .alert-warning {
+        .message-warning {
             background-color: #FFD700;
             color: black;
+        }
+
+        /* Animações */
+        @keyframes fadeOut {
+            0% {
+                opacity: 1;
+                visibility: visible;
+            }
+            100% {
+                opacity: 0;
+                visibility: hidden;
+                top: -50px;
+            }
+        }
+
+        /* Responsividade */
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+                visibility: hidden;
+            }
+            100% {
+                opacity: 1;
+                visibility: visible;
+            }
         }
 
         @media (max-width: 768px) {
@@ -124,11 +152,12 @@
     <div class="container">
         <h1>Cadastrar Venda</h1>
 
+        <!-- Exibição das mensagens de erro -->
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 <div class="messages">
                     {% for category, message in messages %}
-                        <div class="flash-message alert-{{ category }}">
+                        <div class="flash-message message-{{ category }}">
                             {{ message }}
                         </div>
                     {% endfor %}
@@ -139,62 +168,62 @@
         <form action="/vendas" method="POST">
             <div class="form-group">
                 <label for="idvendedor">ID do Vendedor:</label>
-                <input type="number" id="idvendedor" name="idvendedor" placeholder="Digite o ID do vendedor ">
+                <input type="number" id="idvendedor" name="idvendedor" placeholder="Digite o ID do vendedor " required>
             </div>
 
             <div class="form-group">
                 <label for="idcarro">ID do Carro:</label>
-                <input type="number" id="idcarro" name="idcarro" placeholder="Digite o ID do carro ">
+                <input type="number" id="idcarro" name="idcarro" placeholder="Digite o ID do carro " required>
             </div>
 
             <div class="form-group">
                 <label for="idCliente">ID do Cliente:</label>
-                <input type="number" id="idCliente" name="idCliente" placeholder="Digite o ID do cliente">
+                <input type="number" id="idCliente" name="idCliente" placeholder="Digite o ID do cliente" required>
             </div>
 
             <div class="form-group">
                 <label for="Nome_cliente">Nome do Cliente:</label>
-                <input type="text" id="Nome_cliente" name="Nome_cliente" placeholder="Nome do Comprador">
+                <input type="text" id="Nome_cliente" name="Nome_cliente" placeholder="Nome do Comprador" required>
             </div>
 
             <div class="form-group">
                 <label for="data_venda">Data da Venda:</label>
-                <input type="date" id="data_venda" name="data_venda" placeholder="Nome do Comprador">
+                <input type="date" id="data_venda" name="data_venda" required>
             </div>
 
             <div class="form-group">
                 <label for="Comissao_carro">Comissão do Carro:</label>
-                <input type="number" step="0.01" id="Comissao_carro" name="Comissao_carro" placeholder="R$ ">
+                <input type="number" step="0.01" id="Comissao_carro" name="Comissao_carro" placeholder="R$ " required>
             </div>
 
             <div class="form-group">
                 <label for="Retorno_financiamento">Retorno do Financiamento:</label>
-                <input type="number" step="0.01" id="Retorno_financiamento" name="Retorno_financiamento" placeholder="R$">
+                <input type="number" step="0.01" id="Retorno_financiamento" name="Retorno_financiamento" placeholder="R$" required>
             </div>
 
             <div class="form-group">
                 <label for="Taxa_financiamento">Taxa do Financiamento:</label>
-                <input type="number" step="0.01" id="Taxa_financiamento" name="Taxa_financiamento" placeholder="R$ ">
+                <input type="number" step="0.01" id="Taxa_financiamento" name="Taxa_financiamento" placeholder="R$ " required>
             </div>
 
             <div class="form-group">
                 <label for="Transferencia">Transferência:</label>
-                <input type="number" step="0.01" id="Transferencia" name="Transferencia" placeholder="R$">
+                <input type="number" step="0.01" id="Transferencia" name="Transferencia" placeholder="R$" required>
             </div>
 
             <div class="form-group">
                 <label for="comissao_vendedor">Comissão Vendedor:</label>
-                <input type="number" step="0.01" id="comissao_vendedor" name="comissao_vendedor"  placeholder="R$">
+                <input type="number" step="0.01" id="comissao_vendedor" name="comissao_vendedor" placeholder="R$" required>
             </div>
 
             <div class="form-group">
                 <label for="Corretor">Corretor:</label>
-                <input type="number" step="0.01" id="Corretor" name="Corretor"  placeholder="R$">
+                <input type="number" step="0.01" id="Corretor" name="Corretor" placeholder="R$" required>
             </div>
 
             <div class="form-group">
                 <label for="Dizimo">Dízimo:</label>
-                <input type="number" step="0.01" id="Dizimo" name="Dizimo"placeholder="R$">
+                <input type="number" step="0.01" id="Dizimo" name="Dizimo" placeholder="R$" required>
             </div>
 
             <div class="form-group">
