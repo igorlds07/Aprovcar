@@ -242,6 +242,11 @@
 
         {% if resultado %}
         <h2>Resultados:</h2>
+        {% if message %}
+                <div class="message-relatorio">
+                    {{ message|safe }}
+                </div>
+            {% endif %}
 
             <table>
                 <thead>

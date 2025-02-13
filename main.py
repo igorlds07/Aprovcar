@@ -309,7 +309,7 @@ def funcionarios():
 @app.route('/excluir_funcionario', methods=['GET', 'POST'])
 def excluir_funcionario():
     """
-    
+
     :return:
     """
     conexao = conexao_bd()
@@ -531,6 +531,7 @@ def relatorio_vendas():
         message = (
             f'Data inicío: {data_inicio_formatada} <br>'
             f'Data fim: {data_fim_formatada} <br>'
+            f'<br>'
             f'Foram realizados {total} Venda(s) !<br>'
             f'Total Liquído: {format_currency(total_entradas, "BRL", locale="pt_BR")}')
 
@@ -638,6 +639,12 @@ def relatorio_vendedor():
         cursor.execute(query, (data_inicio.strftime('%Y-%m-%d'), data_fim.strftime('%Y-%m-%d')))
         resultado = cursor.fetchall()
 
+        data_inicio_formatada = data_inicio.strftime('%d/%m/%Y')
+        data_fim_formatada = data_fim.strftime('%d/%m/%Y')
+
+        message = (f'Data de inicío: {data_inicio_formatada}<br>'
+                  f'Data fim: {data_fim_formatada}')
+
         if not resultado:
             flash('Nenhum resultado encontrado no período!', 'error')
             return render_template('relatorio_vendedor.html')
@@ -663,7 +670,7 @@ def relatorio_vendedor():
 
         print(resultado)
 
-        return render_template('relatorio_vendedor.html', resultado=resultado)
+        return render_template('relatorio_vendedor.html', resultado=resultado, message=message)
 
     return render_template('relatorio_vendedor.html', resultado=resultado)
 
@@ -797,15 +804,15 @@ def excluir_despesa():
     buscar = []
 
     if request.method == 'POST':
-        despesa = request.form.get('descrição')  # Nome da despesa para busca
-        descricao_confirmada = request.form.get('descricao')  # Nome da despesa ao excluir
+        id_despesa = request.form.get('id_despesa')  # Nome da despesa para busca
+        descricao_confirmada = request.form.get('id_despesa')  # Nome da despesa ao excluir
         confirmar = request.form.get('confirmar')
 
-        print(f"Despesa: {despesa}, Confirmar: {confirmar}, Descrição Confirmada: {descricao_confirmada}")
+        print(f"Despesa: {id_despesa}, Confirmar: {confirmar}, Descrição Confirmada: {descricao_confirmada}")
 
         # Se o usuário buscou uma despesa
-        if despesa:
-            cursor.execute('SELECT * FROM despesas WHERE descrição = %s;', (despesa,))
+        if id_despesa:
+            cursor.execute('SELECT * FROM despesas WHERE iddespesas = %s;', (id_despesa,))
             buscar = cursor.fetchall()
             if not buscar:
                 flash('Despesa não encontrada!', 'error')
@@ -814,8 +821,8 @@ def excluir_despesa():
         # Se o usuário confirmou a exclusão
         if descricao_confirmada and confirmar == 'sim':
             print("Excluindo despesa:", descricao_confirmada)
-            comando = 'DELETE FROM despesas WHERE descrição = %s;'
-            cursor.execute(comando, (descricao_confirmada,))
+            comando = 'DELETE FROM despesas WHERE iddespesas = %s;'
+            cursor.execute(comando, (id_despesa,))
             conexao.commit()
 
             flash(f'Despesa "{descricao_confirmada}" excluída com sucesso!', 'success')
@@ -1066,6 +1073,7 @@ def calcular_repasse():
         lucro_porcentagem = float(porcentagem)
 
         caluculo = valor_carro + valor_despesas
+        valor_porcentagem = caluculo * (lucro_porcentagem / 100)
         repasse = caluculo * (lucro_porcentagem / 100) + caluculo
 
         print(repasse)
@@ -1075,7 +1083,7 @@ def calcular_repasse():
             f'                               +      <br>'
             f'Despesas = {format_currency(valor_despesas, "BRL", locale="pt_BR")}<br>'
             f'                              +        <br>'
-            f'Porcentagem lucro = {lucro_porcentagem}%<br>'
+            f'Porcentagem lucro = {lucro_porcentagem}%, que equivale a {format_currency(valor_porcentagem, "BRL", locale="pt_BR")}<br>'
             f'  <br>       '
             f'O valor sugerido para venda é de {format_currency(repasse, "BRL", locale="pt_BR")}.')
         return render_template('calcular_repasse.html', lucro=repasse, message=message)
