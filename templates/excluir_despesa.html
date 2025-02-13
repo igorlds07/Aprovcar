@@ -49,14 +49,17 @@ body {
 
 /* Estilo para o conteúdo principal */
 .container {
-    width: 100%;
-    max-width: 800px;
+    width: 900%;
+    max-width: 700px;
     margin-right: 250px;
     margin: 30px auto;
     background-color: #C0C0C0;
     padding: 30px;
     border-radius: 8px;
+    position: relative;
+    margin-left: 438px; /* Para não sobrepor o menu */
     box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.1);
+    height: auto; /* Permite que o container tenha altura adaptativa */
 }
 
 h1 {
@@ -194,8 +197,8 @@ button[type="submit"]:hover, .confirm-button:hover {
         <!-- Exibe o Formulário de Exclusão (Somente no GET) -->
         <form method="POST" action="{{ url_for('excluir_despesa') }}">
             <div class="form-group">
-                <label for="descrição">Descrição da Despesa:</label>
-                <input type="text" id="descrição" name="descrição" value="{{ buscar[0][1] if buscar else '' }}" required>
+                <label for="id_despesa">Id da Despesa:</label>
+                <input type="number" id="id_despesa" name="id_despesa" value="{{ buscar[0][1] if buscar else '' }}" required>
             </div>
 
             <div class="form-group">
@@ -222,7 +225,7 @@ button[type="submit"]:hover, .confirm-button:hover {
                 </div>
 
                             <!-- Enviando os dados necessários no POST -->
-                <input type="hidden" name="descricao" value="{{ buscar[0][1] }}">
+                <input type="hidden" name="id_despesa" value="{{ buscar[0][0] }}">
                 <input type="hidden" name="valor_despesa" value="{{ buscar[0][2] }}">
                 <input type="hidden" name="data_despesa" value="{{ buscar[0][3] }}">
 

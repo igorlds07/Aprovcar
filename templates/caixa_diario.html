@@ -24,6 +24,14 @@
             text-align: center;
         }
 
+        input[type="checkbox"] {
+            display: none;
+        }
+
+        input[type="checkbox"]:checked + .submenu {
+            display: block;
+        }
+
         /* Container principal */
         .container {
             background-color: #C0C0C0;
@@ -87,6 +95,28 @@
             text-decoration: underline;
         }
 
+        /* Estilo para o menu */
+        .submenu {
+            display: none;
+            flex-direction: column;
+            background-color: #f8f9fa;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 5px;
+        }
+
+        /* Estilo para o submenu, definindo o tamanho fixo e alinhamento */
+        .submenu a {
+            text-decoration: none;
+            color: #007bff;
+            margin: 5px 0;
+            font-size: 1rem;
+        }
+
+        .submenu a:hover {
+            text-decoration: underline;
+        }
+
         /* Exemplo de responsividade */
         @media (max-width: 768px) {
             h1 {
@@ -100,11 +130,13 @@
     </style>
 </head>
 <body>
-
-{% include 'menu.html' %}
+  <!-- Menu Lateral -->
+    <div class="menu">
+    </div>
+    {% include 'menu.html' %}
     <div class="container">
         <!-- Cabeçalho -->
-        <h1>Caixa Diário </h1>
+        <h1>Caixa Diário</h1>
         <h2>{{ data  | to_date('%d de %B de %Y') }}</h2>
         <!-- Entradas -->
         <h3 class="entradas">Entradas (Recebimentos): <span>{{ total_entradas | real }}</span></h3>
@@ -114,7 +146,6 @@
 
         <!-- Saldo do Caixa -->
         <h3 class="caixa">Saldo do Caixa: <span>{{ saldo_caixa | real }}</span></h3>
-
 
     </div>
 </body>
