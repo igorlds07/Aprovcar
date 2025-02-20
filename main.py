@@ -363,7 +363,7 @@ def editar_funcionario():
         cursor.close()
         conexao.close()
         if not vendedor:
-            flash('Funcionário não encontrado !', 'error')
+            flash('Vendedor não encontrado !', 'error')
             conexao.close()
             cursor.close()
             return redirect(url_for('editar_funcionario'))
@@ -643,7 +643,7 @@ def relatorio_vendedor():
         data_fim_formatada = data_fim.strftime('%d/%m/%Y')
 
         message = (f'Data de inicío: {data_inicio_formatada}<br>'
-                  f'Data fim: {data_fim_formatada}')
+                   f'Data fim: {data_fim_formatada}')
 
         if not resultado:
             flash('Nenhum resultado encontrado no período!', 'error')
@@ -858,7 +858,7 @@ def vendas():
             flash("Vendedor não encontrado!", "error")
             return redirect(url_for('vendas'))
 
-        cursor.execute("SELECT status from estoque WHERE idcarro = %s;", (idcarro, ))
+        cursor.execute("SELECT status from estoque WHERE idcarro = %s;", (idcarro,))
 
         status_atual = cursor.fetchone()
         print(status_atual)
@@ -976,7 +976,7 @@ def excluir_veiculo():
 
         if id_carro:
             id_veiculo = int(id_carro)
-            cursor.execute('SELECT * FROM estoque WHERE idcarro = %s;', (id_veiculo, ))
+            cursor.execute('SELECT * FROM estoque WHERE idcarro = %s;', (id_veiculo,))
             carro = cursor.fetchall()
             print(carro)
             if not carro:
@@ -991,7 +991,7 @@ def excluir_veiculo():
                 return render_template('excluir_veiculo.html')
             id_veiculo = int(id_carro)
             print('Confirmado')
-            cursor.execute('DELETE FROM estoque WHERE idcarro = %s;', (id_veiculo, ))
+            cursor.execute('DELETE FROM estoque WHERE idcarro = %s;', (id_veiculo,))
             conexao.commit()
             flash('Veículo excluido com sucesso', 'success')
             carro = []
@@ -1057,7 +1057,6 @@ def caixa_diario():
 
 @app.route('/calcular_repasse', methods=['GET', 'POST'])
 def calcular_repasse():
-
     if request.method == 'POST':
         print(request.form)
         carro = request.form.get('carro')
@@ -1093,4 +1092,4 @@ def calcular_repasse():
 
 # Condição para verificar se o projeto esta sendo executado diretamente
 if __name__ == '__main__':
-    app.run(port=5001, debug=True)
+    app.run(port=8000, debug=True)
